@@ -4,10 +4,24 @@
 # Uncomment the next line to force use of VirtualBox provider when Fusion provider is present
 # ENV['VAGRANT_DEFAULT_PROVIDER'] = 'virtualbox'
 
+# Nodes: logging 	192.168.100.201
+#        controller-01 	192.168.100.198
+#        controller-02 	192.168.100.199
+#        controller-03 	192.168.100.200
+#        compute-01 	192.168.100.202
+#        compute-02 	192.168.100.203
+
+# Interfaces
+# eth0 - nat (used by VMware/VirtualBox)
+# eth1 - br-mgmt (Container) 172.16.0.0/16
+# eth2 - br-vlan (Neutron VLAN network) 0.0.0.0/0
+# eth3 - host / API 192.168.100.0/24
+# eth4 - br-vxlan (Neutron VXLAN Tunnel network) 172.29.240.0/22
+
 nodes = {
-    'controller' => [3, 198],
     'logging'  => [1, 201],
-    'compute'  => [2, 202],
+    'controller' => [3, 198],
+    'compute'  => [1, 202],
 }
 
 Vagrant.configure("2") do |config|
@@ -64,20 +78,38 @@ Vagrant.configure("2") do |config|
         box.vm.network :private_network, ip: "172.16.0.#{ip_start+i}", :netmask => "255.255.0.0"
         box.vm.network :private_network, ip: "10.10.0.#{ip_start+i}", :netmask => "255.255.255.0" 
       	box.vm.network :private_network, ip: "192.168.100.#{ip_start+i}", :netmask => "255.255.255.0" 
-      	box.vm.network :private_network, ip: "172.19.240.#{ip_start+i}", :netmask => "255.255.252.0" 
-    #		# If running second swift, swift2
-   # 		if prefix == "swift2"
-   # 		  box.vm.provision :shell, :path => "keystone.sh"
-   # 		end
-#
-#        box.vm.provision :shell, :path => "#{prefix}.sh"
+      	box.vm.network :private_network, ip: "172.29.240.#{ip_start+i}", :netmask => "255.255.252.0" 
+
+
+	# Logging host is also the deployment server, so this will have the master SSH key which then gets copied
+	if prefix == "logging"
+	  box.vm.provision :shell, :path => "masterkey.sh"
+	else
+	  box.vm.provision :shell, :path => "clientkey.sh"
+	end
+
+        box.vm.provision :shell, :path => "hosts.sh"
+        box.vm.provision :shell, :path => "install-prereqs.sh"
+        box.vm.provision :shell, :path => "networking.sh"
+
+	# Assumption is that compute-01 will run last, change to suit
+	# This will shell into logging to kickstart the install from it
+	if hostname == "compute-01"
+	  box.vm.provision :shell, :path => "bootstrap-install.sh"
+	end
+
+        # box.vm.provision :shell, :path => "#{prefix}.sh"
 
         # If using Fusion or Workstation
         box.vm.provider :vmware_fusion or box.vm.provider :vmware_workstation do |v|
-          v.vmx["memsize"] = 1024
-          if prefix == "compute" or prefix == "controller" or prefix == "swift"
-            v.vmx["memsize"] = 3172
-            v.vmx["numvcpus"] = "2"
+          v.vmx["memsize"] = 2048
+          if prefix == "controller"
+            v.vmx["memsize"] = 2048
+            v.vmx["numvcpus"] = "1"
+          end
+          if prefix == "compute"
+            v.vmx["memsize"] = 2048
+            v.vmx["numvcpus"] = "1"
           end
         end
 
@@ -86,7 +118,7 @@ Vagrant.configure("2") do |config|
           # Defaults
           vbox.customize ["modifyvm", :id, "--memory", 1024]
           vbox.customize ["modifyvm", :id, "--cpus", 1]
-          if prefix == "compute" or prefix == "controller" or prefix == "swift"
+          if prefix == "compute" or prefix == "controller"
             vbox.customize ["modifyvm", :id, "--memory", 3172]
             vbox.customize ["modifyvm", :id, "--cpus", 2]
           end

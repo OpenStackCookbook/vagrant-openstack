@@ -62,8 +62,8 @@ infra_hosts:
 compute_hosts:
   compute-01:
     ip: 172.16.0.202
-  compute-02:
-    ip: 172.16.0.203
+#  compute-02:
+#    ip: 172.16.0.203
 
 #storage_hosts:
 #  logging:

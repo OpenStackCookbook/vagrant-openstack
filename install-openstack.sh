@@ -19,10 +19,6 @@ ap() {
 	ansible-playbook -e @/etc/rpc_deploy/user_variables.yml "$@"
 }
 
-install_preqs() {
-	apt-get update
-	apt-get -y upgrade
-}
 
 reset_environment() {
 	cd /root/ansible-lxc-rpc/rpc_deployment
@@ -54,77 +50,40 @@ install_ansible() {
 }
 
 configure_deployment() {
-	cp -r ~/${RPC_REPO}/etc/rpc_deploy /etc
+	cp -R /opt/os-ansible-deployment/etc/rpc_deploy /etc
 	if [[ -f /etc/rpc_deploy/rpc_user_config.yml ]]; then mv /etc/rpc_deploy/rpc_user_config.yml{,.bak}; fi
+	if [[ -f /etc/rpc_deploy/user_variables ]]; then mv /etc/rpc_deploy/user_variables.yml{,.bak}; fi
 
-	wget -O /etc/rpc_deploy/rpc_user_config.yml ftp://192.168.1.2/Public/ubuntu/rpc_user_config.yml
-	wget -O /etc/rpc_deploy/user_variables.yml ftp://192.168.1.2/Public/ubuntu/user_variables.yml
+	cp /vagrant/rpc_user_config.yml /etc/rpc_deploy/rpc_user_config.yml
+	cp /vagrant/user_variables.yml /etc/rpc_deploy/user_variables.yml
+	
+	# Remove swift artifact
+	rm -f /etc/rpc_deploy/conf.d/swift.yml
 }
 
 pre_deploy_containers() {
 	# Grab container from local FTP instead of waiting a bajillion years and endless retries
-	for a in {1..7}
+	for a in ${HOSTS}
 	do
-		ssh openstack${a} wget -O /var/cache/lxc/rpc-trusty-container.tgz ftp://nas2/Public/ubuntu/rpc-trusty-container.tgz
+		ssh ${a} "mkdir -p /var/cache/lxc; wget -O /var/cache/lxc/rpc-trusty-container.tgz ftp://nas2/Public/ubuntu/rpc-trusty-container.tgz"
 	done
 }
 
 install_foundation_playbooks() {
-	cd ~/ansible-lxc-rpc/rpc_deployment
-	for p in ${FOUNDATION_PLAYBOOKS}
-	do
-		if [[ ! -f /root/${p}.retry ]]
-		then
-			ap playbooks/setup/${p}.yml
-		fi
-		sleep 1
-
-		count=0
-		while [[ ${count} -lt ${RETRY} ]] && [[ -f /root/${p}.retry ]]
-		do 
-			let count=count+1
-			ap playbooks/setup/${p}.yml --limit @/root/${p}.retry
-			if [[ $? -eq 0 ]]; then break; fi
-
-			if [[ ${count} -eq ${RETRY} ]]
-			then
-				echo "Exiting on ${p}."
-				exit 1
-			fi
-		done
-	done
+	cd /opt/os-ansible-deployment/rpc_deployment
+	ap playbooks/setup/host-setup.yml
 }
 
 
 install_infra_playbooks() {
-	cd ~/ansible-lxc-rpc/rpc_deployment
-	for p in ${INFRA_PLAYBOOKS}
-	do
-		if [[ ! -f /root/${p}.retry ]]
-		then
-			ap -vvv playbooks/infrastructure/${p}.yml
-		fi
-		sleep 1
-
-		count=0
-		while [[ ${count} -lt ${RETRY} ]] && [[ -f /root/${p}.retry ]]
-		do 
-			let count=count+1
-			ap -vvv playbooks/infrastructure/${p}.yml --limit @/root/${p}.retry
-			if [[ $? -eq 0 ]]; then break; fi
-
-			if [[ ${count} -eq ${RETRY} ]]
-			then
-				echo "Exiting on ${p}."
-				exit 1
-			fi
-		done
-	done
+	cd /opt/os-ansible-deployment/rpc_deployment
+	ap playbooks/infrastructure/haproxy-install.yml
+	ap playbooks/infrastructure/infrastructure-setup.yml
 }
 
 check_galera() {
 	# MySQL Test
-	mysql -uroot -psecrete -h 192.168.1.107 -e 'show status;'
+	mysql -uroot -psecrete -h 192.168.100.201 -e 'show status;'
 	STATUS=$?
 	if [[ $STATUS != 0 ]]
 	then
@@ -134,46 +93,25 @@ check_galera() {
 }
 
 install_openstack_playbooks() {
-	cd ~/ansible-lxc-rpc/rpc_deployment
-	for p in ${OPENSTACK_PLAYBOOKS}
-	do
-		if [[ ! -f /root/${p}.retry ]]
-		then
-			ap playbooks/openstack/${p}.yml
-		fi
-		sleep 1
-
-		count=0
-		while [[ ${count} -lt ${RETRY} ]] && [[ -f /root/${p}.retry ]]
-		do 
-			let count=count+1
-			ap -vvv playbooks/openstack/${p}.yml --limit @/root/${p}.retry
-			if [[ $? -eq 0 ]]; then break; fi
-
-			if [[ ${count} -eq ${RETRY} ]]
-			then
-				echo "Exiting on ${p}."
-				exit 1
-			fi
-		done
-	done
+	cd /opt/os-ansible-deployment/rpc_deployment
+	ap playbooks/openstack/openstack-setup.yml
 }
 
 fixup_flat_networking() {
-	for a in {1..3}; do ssh -n openstack${a} "sed -i 's/vlan:br-vlan/vlan:eth11/g' /etc/neutron/plugins/ml2/ml2_conf.ini; restart neutron-linuxbridge-agent"; done
+	for a in $COMPUTES; do ssh -n ${a} "sed -i 's/vlan:br-vlan/vlan:eth11/g' /etc/neutron/plugins/ml2/ml2_conf.ini; restart neutron-linuxbridge-agent"; done
 }
 
 #reset_environment
 get_playbooks
 install_pip
 install_ansible
-#configure_deployment
-#pre_deploy_containers
-#install_foundation_playbooks
-#install_infra_playbooks
-#check_galera
-#install_openstack_playbooks
-#fixup_flat_networking
+configure_deployment
+pre_deploy_containers
+install_foundation_playbooks
+install_infra_playbooks
+check_galera
+install_openstack_playbooks
+fixup_flat_networking
 
 # List Inventory Contents
 #~/ansible-lxc-rpc/scripts/inventory-manage.py -f /etc/rpc_deploy/rpc_inventory.json --list-host
