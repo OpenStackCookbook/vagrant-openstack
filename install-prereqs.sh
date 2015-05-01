@@ -1,8 +1,9 @@
 #!/bin/bash
 
 # SECURITY ERRORS
-sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 40976EAF437D05B5
+#sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 40976EAF437D05B5
 
+sudo apt-key update
 sudo apt-get update
 # sudo apt-get -y upgrade
 

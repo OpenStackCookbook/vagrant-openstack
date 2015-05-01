@@ -27,7 +27,8 @@ nodes = {
 Vagrant.configure("2") do |config|
     
   # Virtualbox
-  config.vm.box = "bunchc/trusty-x64"
+  #config.vm.box = "bunchc/trusty-x64"
+  config.vm.box = "ubuntu/trusty64"
   config.vm.synced_folder ".", "/vagrant", type: "nfs"
 
   # VMware Fusion / Workstation

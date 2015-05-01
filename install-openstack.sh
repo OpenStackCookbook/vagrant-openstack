@@ -1,7 +1,9 @@
 #!/bin/bash
 
-COMPUTES="compute-01
-compute-02"
+TAG=10.1.4
+
+COMPUTES="compute-01"
+#compute-02"
 
 CONTROLLERS="controller-01
 controller-02
@@ -36,7 +38,7 @@ reset_environment() {
 
 get_playbooks() {
 	cd /opt
-	git clone -b 10.1.3 https://github.com/stackforge/os-ansible-deployment.git
+	git clone -b ${TAG} https://github.com/stackforge/os-ansible-deployment.git
 }
 
 install_pip() {
