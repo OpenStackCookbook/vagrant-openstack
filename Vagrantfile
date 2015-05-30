@@ -27,8 +27,8 @@ nodes = {
 Vagrant.configure("2") do |config|
     
   # Virtualbox
-  #config.vm.box = "bunchc/trusty-x64"
-  config.vm.box = "ubuntu/trusty64"
+  config.vm.box = "bunchc/trusty-x64"
+  #config.vm.box = "ubuntu/trusty64"
   config.vm.synced_folder ".", "/vagrant", type: "nfs"
 
   # VMware Fusion / Workstation
@@ -55,16 +55,16 @@ Vagrant.configure("2") do |config|
   #Default is 2200..something, but port 2200 is used by forescout NAC agent.
   config.vm.usable_port_range= 2800..2900 
 
-  if Vagrant.has_plugin?("vagrant-cachier")
-    config.cache.scope = :box
-    config.cache.enable :apt
-    config.cache.synced_folder_opts = {
-      type: :nfs,
-      mount_options: ['rw', 'vers=3', 'tcp', 'nolock']
-    }
-  else
-    puts "[-] WARN: This would be much faster if you ran vagrant plugin install vagrant-cachier first"
-  end
+  #if Vagrant.has_plugin?("vagrant-cachier")
+  #  config.cache.scope = :box
+  #  config.cache.enable :apt
+  #  config.cache.synced_folder_opts = {
+  #    type: :nfs,
+  #    mount_options: ['rw', 'vers=3', 'tcp', 'nolock']
+  #  }
+  #else
+  #  puts "[-] WARN: This would be much faster if you ran vagrant plugin install vagrant-cachier first"
+  #end
 
   nodes.each do |prefix, (count, ip_start)|
     count.times do |i|
