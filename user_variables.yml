@@ -1,175 +1,27 @@
----
-
-## Rackspace Cloud Details
-# UK accounts: https://lon.identity.api.rackspacecloud.com/v2.0
-rackspace_cloud_auth_url: https://identity.api.rackspacecloud.com/v2.0
-rackspace_cloud_tenant_id: SomeTenantID
-rackspace_cloud_username: SomeUserName
-rackspace_cloud_password: SomeUsersPassword
-rackspace_cloud_api_key: SomeAPIKey
-
-
-## Rabbit Options
-rabbitmq_password: guest
-rabbitmq_cookie_token: rabbitcookie
-
-
-## Tokens
-memcached_encryption_key: SuperSecreteKey
-
-
-## Container default user
-container_openstack_password: openstack
-
-
-## Galera Options
-mysql_root_password: openstack
-
-# Defined in group_vars/galera, but can overriden here.
-# galera_wait_timeout: 3600
-
-
-## Keystone Options
-keystone_container_mysql_password: openstack
-keystone_auth_admin_token: SuperSecreteKeystoneToken
-keystone_auth_admin_password: openstack
-keystone_service_password: openstack
-
-
-## Cinder Options
-cinder_container_mysql_password: openstack
-cinder_service_password: openstack
-cinder_v2_service_password: openstack
-
-
-## Glance Options
-# Set default_store to "swift" if using Cloud Files or swift backend
-glance_default_store: file
-glance_container_mysql_password: openstack
-glance_service_password: openstack
-glance_swift_store_auth_address: "{{ rackspace_cloud_auth_url }}"
-glance_swift_store_user: "{{ rackspace_cloud_tenant_id }}:{{ rackspace_cloud_username }}"
-glance_swift_store_key: "{{ rackspace_cloud_password }}"
-glance_swift_store_container: SomeContainerName
-glance_swift_store_region: SomeRegion
-# `internalURL` will cause glance to speak to swift via ServiceNet, use
-# `publicURL` to communicate with swift over the public network
-glance_swift_store_endpoint_type: internalURL
+## Glance Options 
+# Set default_store to "swift" if using Cloud Files 
+# or swift backend or file to use NFS or local filesystem
+glance_default_store: file 
 glance_notification_driver: noop
-# Set glance cache size in bytes, should be less than container size. Defaults to 10GiB
-#glance_image_cache_max_size: 4294967296
 
-## Heat Options
-heat_stack_domain_admin_password: openstack
-heat_container_mysql_password: openstack
-### THE HEAT AUTH KEY NEEDS TO BE 32 CHARACTERS LONG ##
-heat_auth_encryption_key: SuperSecreteEncriptionKey0123456
-### THE HEAT AUTH KEY NEEDS TO BE 32 CHARACTERS LONG ##
-heat_service_password: openstack
-heat_cfn_service_password: openstack
+## Nova options
+nova_virt_type: kvm 
+nova_cpu_allocation_ratio: 2.0 
+nova_ram_allocation_ratio: 1.0
 
+## Apache SSL Settings 
+# These do not need to be configured unless you're creating 
+# certificates for 
+# services running behind Apache (currently, Horizon and 
+# Keystone). 
+ssl_protocol: "ALL -SSLv2 -SSLv3" 
+# Cipher suite string from https://hynek.me/articles/hardening-your-web-servers-ssl-ciphers/ 
+ssl_cipher_suite: "ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS"
 
-## Horizon Options
-horizon_container_mysql_password: openstack
-horizon_secret_key: openstack
-
-## MaaS Options
-# Set maas_auth_method to 'token' to use maas_auth_token/maas_api_url
-# instead of maas_username/maas_api_key
-maas_auth_method: password
-maas_auth_url: "{{ rackspace_cloud_auth_url }}"
-maas_username: "{{ rackspace_cloud_username }}"
-maas_api_key: "{{ rackspace_cloud_api_key }}"
-maas_auth_token: some_token
-maas_api_url: https://monitoring.api.rackspacecloud.com/v1.0/{{ rackspace_cloud_tenant_id }}
-maas_notification_plan: npManaged
-# By default we will create an agent token for each entity, however if you'd
-# prefer to use the same agent token for all entities then specify it here
-#maas_agent_token: some_token
-maas_target_alias: public0_v4
-maas_scheme: https
-# Override scheme for specific service remote monitor by specifying here: E.g.
-# maas_nova_scheme: http
-maas_keystone_user: maas
-maas_keystone_password: openstack
-# Check this number of times before registering state change
-maas_alarm_local_consecutive_count: 3
-maas_alarm_remote_consecutive_count: 1
-# Period and timeout times (seconds) for a check
-# Timeout must be less than period
-maas_check_period: 60
-maas_check_timeout: 30
-maas_monitoring_zones:
-  - mzdfw
-  - mziad
-  - mzord
-  - mzlon
-  - mzhkg
-# Specify the maas_fqdn_extension, defaults to empty string.
-# This will be appended to the inventory_name of a host for MaaS purposes.
-# The inventory name + maas_fqdn_extension must match the entity name in MaaS
-# maas_fqdn_extension: .example.com
-# Set the following to skip creating alarms for this device
-#maas_excluded_devices: ['xvde']
-# Set the threshold for filesystem monitoring when you are not specifying specific filesystems.
-maas_filesystem_threshold: 90.0
-# Explicitly set the filesystems to set up monitors/alerts for.
-# NB You can override these in rpc_user_config per device using "maas_filesystem_overrides"
-#maas_filesystem_monitors:
-#  - filesystem: /
-#    threshold: 90.0
-#  - filesystem: /boot
-#    threshold: 90.0
-
-## Neutron Options
-neutron_container_mysql_password: openstack
-neutron_service_password: openstack
-
-
-## Nova Options
-# This defaults to KVM, if you are deploying on a host that is not KVM capable
-# change this to your hypervisor type: IE "qemu", "lxc".
-nova_virt_type: kvm
-nova_cpu_allocation_ratio: 4.0
-nova_ram_allocation_ratio: 2.0
-nova_container_mysql_password: openstack
-nova_metadata_proxy_secret: openstack
-nova_ec2_service_password: openstack
-nova_service_password: openstack
-nova_v3_service_password: openstack
-nova_s3_service_password: openstack
-
-# Uncomment "nova_console_endpoint" to define a specific nova console URI or 
-# IP address this will construct the specific proxy endpoint for the console.
-nova_console_endpoint: 192.168.100.201
-
-
-## RPC Support
-rpc_support_holland_password: openstack
-# rpc_support_holland_branch: defaults to release tag: v1.0.10
-
-## Elasticsearch Options
-elasticsearch_heap_size_mb: 128
-
-## Logstash Options
-logstash_heap_size_mb: 128
-
-## Kibana Options
-kibana_password: openstack
-
-# Swift Options:
-swift_service_password: openstack
-swift_container_mysql_password: openstack
-# Once the swift cluster has been setup DO NOT change these hash values!
-swift_hash_path_suffix: openstack
-swift_hash_path_prefix: openstack
-# This will allow all users to create containers and upload to swift if set to True
-swift_allow_all_users: False
-# The dispersion user is for swift-dispersion-report
-swift_dispersion_user: dispersion
-swift_dispersion_password: openstack
-
-# This variables is used to set haproxy's timeout client and timeout server
-# values, they are set in the main config file and are only used by services
-# that don't set their own values (default: 90s)
-haproxy_timeout: 10s
+## Example environment variable setup:
+proxy_env_url: http://repo.home.linuxservices.co.uk:3142/
+no_proxy_env: "localhost,127.0.0.1,{% for host in groups['all_containers'] %}{{ hostvars[host]['container_address'] }}{% if not loop.last %},{% endif %}{% endfor %}"
+## global_environment_variables:
+HTTP_PROXY: "{{ proxy_env_url }}"
+HTTPS_PROXY: "{{ proxy_env_url }}"
+NO_PROXY: "{{ no_proxy_env }}"

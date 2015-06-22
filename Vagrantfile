@@ -102,14 +102,15 @@ Vagrant.configure("2") do |config|
         # box.vm.provision :shell, :path => "#{prefix}.sh"
 
         # If using Fusion or Workstation
-        box.vm.provider :vmware_fusion or box.vm.provider :vmware_workstation do |v|
-          v.vmx["memsize"] = 2048
+        # box.vm.provider "vmware_fusion" or box.vm.provider "vmware_workstation" do |v|
+        box.vm.provider "vmware_fusion" do |v|
+          v.vmx["memsize"] = 3172
           if prefix == "controller"
-            v.vmx["memsize"] = 2048
+            v.vmx["memsize"] = 4096
             v.vmx["numvcpus"] = "1"
           end
           if prefix == "compute"
-            v.vmx["memsize"] = 2048
+            v.vmx["memsize"] = 3172
             v.vmx["numvcpus"] = "1"
           end
         end

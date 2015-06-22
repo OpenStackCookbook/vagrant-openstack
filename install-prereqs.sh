@@ -4,7 +4,7 @@
 #sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 40976EAF437D05B5
 
 mkdir -p /etc/apt/apt.conf.d
-echo "Acquire::http { Proxy \"http://192.168.1.2:3128\"; };" > /etc/apt/apt.conf.d/01squid
+echo "Acquire::http { Proxy \"http://repo.home.linuxservices.co.uk:3142\"; };" > /etc/apt/apt.conf.d/01squid
 
 sudo apt-key update
 sudo apt-get update
