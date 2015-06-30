@@ -110,8 +110,9 @@ Vagrant.configure("2") do |config|
             v.vmx["numvcpus"] = "1"
           end
           if prefix == "compute"
-            v.vmx["memsize"] = 3172
+            v.vmx["memsize"] = 4096
             v.vmx["numvcpus"] = "1"
+            v.vmx["vhv.enable"] = "TRUE"
           end
         end
 

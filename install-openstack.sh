@@ -16,7 +16,7 @@ HOSTS="logging
 $COMPUTES
 $CONTROLLERS"
 
-RETRY=3
+RETRY=5
 
 ap() {
 	d=$(date)
@@ -144,7 +144,7 @@ install_openstack_playbooks() {
 	count=0
 	while [[ ${count} -lt ${RETRY} ]] && [[ -f /root/setup-openstack.retry ]]
 	do
-		sleep 60
+		sleep 120
 		let count=count+1
 		ap -vvv setup-openstack.yml
 		if [[ $? -eq 0 ]]; then break; fi
