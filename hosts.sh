@@ -1,9 +1,9 @@
 #!/bin/bash
 
 echo "
-192.168.100.201 logging
-192.168.100.198 controller-01 	
-192.168.100.199 controller-02
-192.168.100.200 controller-03
-192.168.100.202 compute-01
-192.168.100.203 compute-02" >> /etc/hosts
+192.168.100.9 logging
+192.168.100.10 controller-01 	
+192.168.100.11 controller-02
+192.168.100.12 controller-03
+192.168.100.13 compute-01
+192.168.100.14 compute-02" >> /etc/hosts

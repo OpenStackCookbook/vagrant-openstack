@@ -1,16 +1,16 @@
 ---
 cidr_networks:
-  management: 172.16.0.0/16
-  tunnel: 172.29.240.0/22
-  storage: 172.29.244.0/22
+  management: 172.29.236.0/24
+  tunnel: 172.29.240.0/24
+  storage: 172.29.244.0/24
 
 used_ips:
-  - 172.16.0.198,172.16.0.203
-  - 172.29.240.198,172.29.240.203
+  - 172.29.236.9,172.29.236.13
+  - 172.29.240.9,172.29.240.13
 
 global_overrides:
-  internal_lb_vip_address: 172.16.0.201
-  external_lb_vip_address: 192.168.100.201
+  internal_lb_vip_address: 172.29.236.10
+  external_lb_vip_address: 192.168.100.10
   lb_name: logging
   tunnel_bridge: "br-vxlan"
   management_bridge: "br-mgmt"
@@ -60,49 +60,49 @@ global_overrides:
 # Shared infrastructure parts
 shared-infra_hosts:
   controller-01:
-    ip: 172.16.0.198
-  controller-02:
-    ip: 172.16.0.199
-  controller-03:
-    ip: 172.16.0.200
+    ip: 172.29.236.10
+#  controller-02:
+#    ip: 172.29.236.11
+#  controller-03:
+#    ip: 172.29.236.12
 
 # OpenStack Compute infrastructure parts
 os-infra_hosts:
   controller-01:
-    ip: 172.16.0.198
-  controller-02:
-    ip: 172.16.0.199
-  controller-03:
-    ip: 172.16.0.200
+    ip: 172.29.236.10
+#  controller-02:
+#    ip: 172.29.236.11
+#  controller-03:
+#    ip: 172.29.236.12
 
 # OpenStack Storage infrastructure parts
 storage-infra_hosts:
   controller-01:
-    ip: 172.16.0.198
-  controller-02:
-    ip: 172.16.0.199
-  controller-03:
-    ip: 172.16.0.200
+    ip: 172.29.236.10
+#  controller-02:
+#    ip: 172.29.236.11
+#  controller-03:
+#    ip: 172.29.236.12
 
 # Keystone Identity infrastructure parts
 identity_hosts:
   controller-01:
-    ip: 172.16.0.198
-  controller-02:
-    ip: 172.16.0.199
-  controller-03:
-    ip: 172.16.0.200
+    ip: 172.29.236.10
+#  controller-02:
+#    ip: 172.29.236.11
+#  controller-03:
+#    ip: 172.29.236.12
 
 # User defined Compute Hosts, this should be a required group
 compute_hosts:
   compute-01:
-    ip: 172.16.0.202
+    ip: 172.29.236.13
 #  compute-02:
-#    ip: 172.16.0.203
+#    ip: 172.29.236.203
 
 #storage_hosts:
 #  logging:
-#    ip: 172.16.0.201
+#    ip: 172.29.236.201
 #    container_vars:
 #      cinder_backends:
 #        limit_container_types: cinder_volume
@@ -113,25 +113,25 @@ compute_hosts:
 
 log_hosts:
   logging:
-    ip: 172.16.0.201
+    ip: 172.29.236.9
 
 network_hosts:
   controller-01:
-    ip: 172.16.0.198
-  controller-02:
-    ip: 172.16.0.199
-  controller-03:
-    ip: 172.16.0.200
+    ip: 172.29.236.10
+#  controller-02:
+#    ip: 172.29.236.11
+#  controller-03:
+#    ip: 172.29.236.12
 
 # User defined Repository Hosts, this is an optional group
-repo-infra_hosts:
-  controller-01:
-    ip: 172.16.0.198
-  controller-02:
-    ip: 172.16.0.199
-  controller-03:
-    ip: 172.16.0.200
+# repo-infra_hosts:
+#   controller-01:
+#     ip: 172.29.236.10
+#  controller-02:
+#    ip: 172.29.236.11
+#  controller-03:
+#    ip: 172.29.236.12
 
 haproxy_hosts:
-  logging:
-    ip: 172.16.0.201
+  controller-01:
+    ip: 172.29.236.10

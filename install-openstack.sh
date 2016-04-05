@@ -3,14 +3,14 @@
 #set -ex
 
 #TAG=10.1.4
-TAG=11.0.3
+TAG=11.0.4
 
 COMPUTES="compute-01"
 #compute-02"
 
-CONTROLLERS="controller-01
-controller-02
-controller-03"
+CONTROLLERS="controller-01"
+#controller-02
+#controller-03"
 
 HOSTS="logging
 $COMPUTES
@@ -28,21 +28,22 @@ ap() {
 
 get_playbooks() {
 	cd /opt
-	rm -rf os-ansible-deployment
-	git clone -b ${TAG} https://github.com/stackforge/os-ansible-deployment.git
+	rm -rf openstack-ansible openstack-ansible
+	#git clone -b ${TAG} https://github.com/stackforge/openstack-ansible.git
+	git clone -b ${TAG} https://github.com/openstack/openstack-ansible.git
 	# Fix the http/https rackspace repo error
-        sed -i 's,http\:\/\/rpc\-repo,https://rpc-repo,g' /opt/os-ansible-deployment/playbooks/inventory/group_vars/all.yml
+        sed -i 's,http\:\/\/rpc\-repo,https://rpc-repo,g' /opt/openstack-ansible/playbooks/inventory/group_vars/all.yml
 }
 
 install_ansible() {
-	# pip install -r /opt/os-ansible-deployment/requirements.txt
-	cd /opt/os-ansible-deployment
+	# pip install -r /opt/openstack-ansible/requirements.txt
+	cd /opt/openstack-ansible
 	scripts/bootstrap-ansible.sh
 	cd /opt
 }
 
 configure_deployment() {
-	cp -R /opt/os-ansible-deployment/etc/openstack_deploy /etc
+	cp -R /opt/openstack-ansible/etc/openstack_deploy /etc
 
 	cp /vagrant/openstack_user_config.yml /etc/openstack_deploy/openstack_user_config.yml
 	cp /vagrant/user_variables.yml /etc/openstack_deploy/user_variables.yml
@@ -50,7 +51,7 @@ configure_deployment() {
 	# Has pointers to proxy and local repo
 	cp /vagrant/user_group_vars.yml /etc/openstack_deploy/user_group_vars.yml
 
-	cd /opt/os-ansible-deployment
+	cd /opt/openstack-ansible
         scripts/pw-token-gen.py --file /etc/openstack_deploy/user_secrets.yml
 	
 	# Remove swift artifact
@@ -59,7 +60,7 @@ configure_deployment() {
 
 install_foundation_playbooks() {
 	rm -f /root/*.retry
-	cd /opt/os-ansible-deployment/playbooks
+	cd /opt/openstack-ansible/playbooks
 	ap setup-hosts.yml
 	
 	count=0
@@ -81,19 +82,19 @@ install_foundation_playbooks() {
 
 install_infra_playbooks() {
 	rm -f /root/*.retry
-	cd /opt/os-ansible-deployment/playbooks
+	cd /opt/openstack-ansible/playbooks
 	ap haproxy-install.yml
 
-	# Put stats in place http://172.16.0.201:9000/stats admin:openstack
+	# Put stats in place http://172.29.236.201:9000/stats admin:openstack
 	cp /vagrant/haproxy_stats /etc/haproxy/conf.d/haproxy_stats
 	/etc/init.d/haproxy restart
 
 	# Hack: Fix strange vcpu issue (https://bugs.launchpad.net/openstack-ansible/+bug/1400444)
-	sed -i 's/galera_wsrep_slave_threads.*/galera_wsrep_slave_threads: 2/g' /opt/os-ansible-deployment/playbooks/roles/galera_server/defaults/main.yml
-	sed -i 's/all_calculated_max_connections.append.*/all_calculated_max_connections.append(1 * 100) %}/' /opt/os-ansible-deployment/playbooks/roles/galera_server/templates/my.cnf.j2
+	sed -i 's/galera_wsrep_slave_threads.*/galera_wsrep_slave_threads: 2/g' /opt/openstack-ansible/playbooks/roles/galera_server/defaults/main.yml
+	sed -i 's/all_calculated_max_connections.append.*/all_calculated_max_connections.append(1 * 100) %}/' /opt/openstack-ansible/playbooks/roles/galera_server/templates/my.cnf.j2
 	
 	# galera_innodb_buffer_pool_size: 4096M is too big for VMs
-	sed -i 's/galera_innodb_buffer_pool_size.*/galera_innodb_buffer_pool_size: 1024M/g' /opt/os-ansible-deployment/playbooks/roles/galera_server/defaults/main.yml
+	sed -i 's/galera_innodb_buffer_pool_size.*/galera_innodb_buffer_pool_size: 1024M/g' /opt/openstack-ansible/playbooks/roles/galera_server/defaults/main.yml
 
 	ap setup-infrastructure.yml
 
@@ -127,7 +128,7 @@ check_galera() {
 	apt-get -y install mariadb-client
 	# MySQL Test
 	PASS=$(awk '/galera_root_password/ {print $2}' /etc/openstack_deploy/user_secrets.yml)
-	mysql -uroot -p${PASS} -h 172.16.0.201 -e 'show status;'
+	mysql -uroot -p${PASS} -h 172.29.236.10 -e 'show status;'
 	STATUS=$?
 	if [[ $STATUS != 0 ]]
 	then
@@ -138,7 +139,7 @@ check_galera() {
 
 install_openstack_playbooks() {
 	rm -f /root/*.retry
-	cd /opt/os-ansible-deployment/playbooks
+	cd /opt/openstack-ansible/playbooks
 	ap setup-openstack.yml
 
 	count=0
@@ -165,7 +166,6 @@ get_playbooks
 install_pip
 install_ansible
 configure_deployment
-pre_deploy_containers
 install_foundation_playbooks
 install_infra_playbooks
 configure_galera_for_haproxy

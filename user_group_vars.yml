@@ -17,12 +17,11 @@
 debug: False
 verbose: True
 
-
 ## Repo server
 repo_service_user_name: nginx
 repo_service_home_folder: /var/www
 repo_server_port: 8181
-repo_pip_default_index: "http://{{ openstack_upstream_domain }}/pools"
+repo_pip_default_index: "http://{{ openstack_upstream_domain }}/mirror/pools"
 
 
 ## Rsyslog server
@@ -31,10 +30,11 @@ rsyslog_server_storage_directory: /var/log/log-storage
 
 ## OpenStack source options
 # URL for the frozen internal openstack repo.
-openstack_repo_url: "http://{{ internal_lb_vip_address }}:{{ repo_server_port }}"
+# openstack_repo_url: "http://{{ internal_lb_vip_address }}:{{ repo_server_port }}"
 # openstack_upstream_domain: "rpc-repo.rackspace.com"
-openstack_upstream_domain: "repo.home.linuxservices.co.uk"
-openstack_upstream_url: "http://{{ openstack_upstream_domain }}"
+openstack_upstream_domain: "nas"
+openstack_upstream_url: "http://{{ openstack_upstream_domain }}/mirror"
+openstack_repo_url: "{openstack_upstream_url}"
 
 repo_mirror_source_host: "{{ openstack_upstream_domain }}"
 
