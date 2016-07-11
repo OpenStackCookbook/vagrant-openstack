@@ -26,10 +26,24 @@ nodes = {
 
 Vagrant.configure("2") do |config|
     
-  # Virtualbox
+  # Defaults (VirtualBox)
   config.vm.box = "bunchc/trusty-x64"
-  #config.vm.box = "ubuntu/trusty64"
   config.vm.synced_folder ".", "/vagrant", type: "nfs"
+
+  config.vm.provider :vmware_workstation do |vmware, override|
+    # If we're running Workstation (i.e. Linux)
+    if Vagrant.has_plugin?("vagrant-triggers")
+      config.trigger.before :up do
+        puts "[+] INFO: Ensuring /dev/vmnet* are correct to allow promiscuous mode."
+        puts "[+]       Needed for access to containers on different VMs."
+        run "./fix_vmnet.sh"
+      end
+    else
+      puts "[-] WARN: Please ensure /dev/vmnet* is group owned and writeable by you" 
+      puts "[-]          sudo chmod chgrp <gid> /dev/vmnet*"
+      puts "[-]          sudo chmod g+rw /dev/vmnet*"
+    end
+  end
 
   # VMware Fusion / Workstation
   config.vm.provider :vmware_fusion or config.vm.provider :vmware_workstation do |vmware, override|
@@ -66,6 +80,7 @@ Vagrant.configure("2") do |config|
     puts "[-] WARN: This would be much faster if you ran vagrant plugin install vagrant-cachier first"
   end
 
+
   nodes.each do |prefix, (count, ip_start)|
     count.times do |i|
       if prefix == "compute" or prefix == "controller"
@@ -101,9 +116,9 @@ Vagrant.configure("2") do |config|
 
         # box.vm.provision :shell, :path => "#{prefix}.sh"
 
-        # If using Fusion or Workstation
-        # box.vm.provider "vmware_fusion" or box.vm.provider "vmware_workstation" do |v|
+        # If using Fusion
         box.vm.provider "vmware_fusion" do |v|
+	  v.linked_clone = true if Vagrant::VERSION =~ /^1.8/
           v.vmx["memsize"] = 3172
           if prefix == "controller"
             v.vmx["memsize"] = 4096
@@ -116,9 +131,25 @@ Vagrant.configure("2") do |config|
           end
         end
 
+        # If using Workstation
+        box.vm.provider "vmware_workstation" do |v|
+	  v.linked_clone = true if Vagrant::VERSION =~ /^1.8/
+          v.vmx["memsize"] = 2048
+          if prefix == "controller"
+            v.vmx["memsize"] = 5172
+            v.vmx["numvcpus"] = "1"
+          end
+          if prefix == "compute"
+            v.vmx["memsize"] = 4096
+            v.vmx["numvcpus"] = "1"
+            v.vmx["vhv.enable"] = "TRUE"
+          end
+        end
+
         # Otherwise using VirtualBox
         box.vm.provider :virtualbox do |vbox|
           # Defaults
+	  vbox.linked_clone = true if Vagrant::VERSION =~ /^1.8/
           vbox.customize ["modifyvm", :id, "--memory", 1024]
           vbox.customize ["modifyvm", :id, "--cpus", 1]
           if prefix == "compute" or prefix == "controller"

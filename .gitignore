@@ -2,3 +2,4 @@
 id_rsa
 id_rsa.pub
 install-openstack.sh.bak
+vagrant.out

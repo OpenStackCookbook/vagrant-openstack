@@ -15,7 +15,6 @@ global_overrides:
   tunnel_bridge: "br-vxlan"
   management_bridge: "br-mgmt"
   provider_networks:
-  provider_networks:
     - network:
         group_binds:
           - all_containers
@@ -52,7 +51,7 @@ global_overrides:
         container_bridge: "br-vlan"
         container_type: "veth"
         container_interface: "eth12"
-        host_bind_override: "eth12"
+        host_bind_override: "eth2"
         type: "flat"
         net_name: "flat"
 

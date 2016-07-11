@@ -22,7 +22,8 @@ ap() {
 	d=$(date)
 	echo "Running $@ $d"
 	#ansible-playbook -e @/etc/openstack_deploy/user_variables.yml "$@"
-	openstack-ansible "$@"
+	openstack-ansible --forks 6 "$@"
+	#openstack-ansible "$@"
 }
 
 
@@ -86,8 +87,8 @@ install_infra_playbooks() {
 	ap haproxy-install.yml
 
 	# Put stats in place http://172.29.236.201:9000/stats admin:openstack
+	mkdir -p /etc/haproxy/conf.d
 	cp /vagrant/haproxy_stats /etc/haproxy/conf.d/haproxy_stats
-	/etc/init.d/haproxy restart
 
 	# Hack: Fix strange vcpu issue (https://bugs.launchpad.net/openstack-ansible/+bug/1400444)
 	sed -i 's/galera_wsrep_slave_threads.*/galera_wsrep_slave_threads: 2/g' /opt/openstack-ansible/playbooks/roles/galera_server/defaults/main.yml
