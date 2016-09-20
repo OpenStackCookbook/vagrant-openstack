@@ -1,0 +1,20 @@
+---
+- name: Ensure OpenStack config directory exists
+  file: path=/etc/openstack_deploy state=directory mode=0755
+
+- name: Copy base OpenStack config directory
+  command: cp -R /opt/openstack-ansible/etc/openstack_deploy /etc
+
+- name: Copy openstack_user_config.yml
+  command: cp /vagrant/openstack_user_config.yml /etc/openstack_deploy/openstack_user_config.yml
+
+- name: Copy user_group_vars.yml
+  command: cp /vagrant/user_variables.yml /etc/openstack_deploy/user_variables.yml
+
+- name: Generate user_secrets.yml
+  shell: scripts/pw-token-gen.py --file /etc/openstack_deploy/user_secrets.yml
+  args:
+    chdir: /opt/openstack-ansible
+
+- name: Remove swift.yml
+  file: path=/etc/openstack_deploy/conf.d/swift.yml state=absent

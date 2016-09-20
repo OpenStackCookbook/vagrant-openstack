@@ -1,0 +1,5 @@
+---
+- name: Install Ansible
+  shell: scripts/bootstrap-ansible.sh
+  args:
+    chdir: /opt/openstack-ansible
