@@ -65,7 +65,7 @@ repo_pip_default_index: "http://{{ openstack_upstream_domain }}/mirror/pools"
 ## OpenStack source options
 # URL for the frozen internal openstack repo.
 # openstack_repo_url: "http://{{ internal_lb_vip_address }}:{{ repo_server_port }}"
-openstack_upstream_domain: "192.168.1.20"
+openstack_upstream_domain: "172.29.236.1"
 openstack_upstream_url: "http://{{ openstack_upstream_domain }}/mirror"
 openstack_repo_url: "{{ openstack_upstream_url }}"
 
@@ -86,9 +86,9 @@ lxc_container_caches:
 #NO_PROXY: "{{ no_proxy_env }}"
 
 global_environment_variables:
-   HTTP_PROXY: "http://192.168.1.20:3128"
-   HTTPS_PROXY: "http://192.168.1.20:3128"
-   NO_PROXY: "localhost,127.0.0.1,192.168.1.20,172.29.236.0/24"
-   http_proxy: "http://192.168.1.20:3128"
-   https_proxy: "http://192.168.1.20:3128"
-   no_proxy: "localhost,127.0.0.1,192.168.1.20,172.29.236.0/24"
+   HTTP_PROXY: "http://172.29.236.1:3128"
+   HTTPS_PROXY: "http://172.29.236.1:3142"
+   NO_PROXY: "localhost,127.0.0.1,172.29.236.1,172.29.236.0/24"
+   #http_proxy: "http://172.29.236.1:3128"
+   https_proxy: "http://172.29.236.1:3142"
+   no_proxy: "localhost,127.0.0.1,172.29.236.1,172.29.236.0/24"

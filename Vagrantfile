@@ -25,6 +25,9 @@ nodes = {
 }
 
 Vagrant.configure("2") do |config|
+  config.hostmanager.enabled = true
+  config.hostmanager.manage_host = true
+  config.hostmanager.manage_guest = true
     
   # Defaults (VirtualBox)
   config.vm.box = "bunchc/trusty-x64"
@@ -89,6 +92,8 @@ Vagrant.configure("2") do |config|
         hostname = "%s" % [prefix, (i+1)]
       end
 
+      config.ssh.insert_key = false
+
       config.vm.define "#{hostname}" do |box|
         box.vm.hostname = "#{hostname}.cook.book"
         box.vm.network :private_network, ip: "172.29.236.#{ip_start+i}", :netmask => "255.255.255.0"
@@ -96,23 +101,35 @@ Vagrant.configure("2") do |config|
       	box.vm.network :private_network, ip: "192.168.100.#{ip_start+i}", :netmask => "255.255.255.0" 
       	box.vm.network :private_network, ip: "172.29.240.#{ip_start+i}", :netmask => "255.255.255.0" 
 
-
 	# Logging host is also the deployment server, so this will have the master SSH key which then gets copied
+	# Also the first to boot, so get that to set the keys to be used.
 	if prefix == "logging"
 	  box.vm.provision :shell, :path => "masterkey.sh"
 	else
 	  box.vm.provision :shell, :path => "clientkey.sh"
 	end
 
-        box.vm.provision :shell, :path => "hosts.sh"
-        box.vm.provision :shell, :path => "install-prereqs.sh"
-        box.vm.provision :shell, :path => "networking.sh"
+	# Order is important - this is the last "prefix" (vm) to load up, so execute last
+        if prefix == "compute"
+          box.vm.provision :ansible do |ansible|
+            # Disable default limit to connect to all the machines
+            ansible.limit = "all"
+            ansible.playbook = "install-openstack.yml"
+            ansible.extra_vars = { ansible_ssh_user: 'vagrant' }
+            ansible.sudo = true
+          end
+	  #box.vm.provision :shell, :path => "bootstrap-install.sh"
+        end 
+
+        #box.vm.provision :shell, :path => "hosts.sh"
+        #box.vm.provision :shell, :path => "install-prereqs.sh"
+        #box.vm.provision :shell, :path => "networking.sh"
 
 	# Assumption is that compute-01 will run last, change to suit
 	# This will shell into logging to kickstart the install from it
-	if hostname == "compute-01"
-	  box.vm.provision :shell, :path => "bootstrap-install.sh"
-	end
+	#if hostname == "compute-01"
+	#  box.vm.provision :shell, :path => "bootstrap-install.sh"
+	#end
 
         # box.vm.provision :shell, :path => "#{prefix}.sh"
 
@@ -134,13 +151,17 @@ Vagrant.configure("2") do |config|
         # If using Workstation
         box.vm.provider "vmware_workstation" do |v|
 	  v.linked_clone = true if Vagrant::VERSION =~ /^1.8/
-          v.vmx["memsize"] = 2048
+          v.vmx["memsize"] = 1024
+          if prefix == "logging"
+            v.vmx["memsize"] = 3172
+            v.vmx["numvcpus"] = "1"
+          end
           if prefix == "controller"
-            v.vmx["memsize"] = 5172
+            v.vmx["memsize"] = 3172
             v.vmx["numvcpus"] = "1"
           end
           if prefix == "compute"
-            v.vmx["memsize"] = 4096
+            v.vmx["memsize"] = 3172
             v.vmx["numvcpus"] = "1"
             v.vmx["vhv.enable"] = "TRUE"
           end
@@ -150,11 +171,15 @@ Vagrant.configure("2") do |config|
         box.vm.provider :virtualbox do |vbox|
           # Defaults
 	  vbox.linked_clone = true if Vagrant::VERSION =~ /^1.8/
-          vbox.customize ["modifyvm", :id, "--memory", 1024]
+          vbox.customize ["modifyvm", :id, "--memory", 3172]
           vbox.customize ["modifyvm", :id, "--cpus", 1]
-          if prefix == "compute" or prefix == "controller"
+          if prefix == "controller"
             vbox.customize ["modifyvm", :id, "--memory", 3172]
             vbox.customize ["modifyvm", :id, "--cpus", 2]
+          end
+          if prefix == "compute"
+            vbox.customize ["modifyvm", :id, "--memory", 3172]
+            vbox.customize ["modifyvm", :id, "--cpus", 1]
           end
           vbox.customize ["modifyvm", :id, "--nicpromisc2", "allow-all"]
           vbox.customize ["modifyvm", :id, "--nicpromisc3", "allow-all"]
