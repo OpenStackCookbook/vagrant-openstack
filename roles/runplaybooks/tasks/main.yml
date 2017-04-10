@@ -13,13 +13,13 @@
 
 
 - name: Run HA Proxy Install
-  shell: openstack-ansible --forks 6 haproxy-install.yml
+  shell: openstack-ansible --forks 2 haproxy-install.yml
   ignore_errors: yes
   args:  
     chdir: /opt/openstack-ansible/playbooks
 
 - name: Backup Run HA Proxy Install
-  shell: openstack-ansible --forks 6 haproxy-install.yml --limit @/root/haproxy-install.retry
+  shell: openstack-ansible --forks 2 haproxy-install.yml --limit @/root/haproxy-install.retry
   args:  
     chdir: /opt/openstack-ansible/playbooks
     removes: /root/haproxy-install.retry
@@ -34,13 +34,13 @@
   shell: /vagrant/fix_galera.sh
 
 - name: Run Infrastructure Playbooks
-  shell: openstack-ansible --forks 6 setup-infrastructure.yml
+  shell: openstack-ansible --forks 2 setup-infrastructure.yml
   ignore_errors: yes
   args:
     chdir: /opt/openstack-ansible/playbooks
 
 - name: Backup Run Infrastructure Playbooks
-  shell: openstack-ansible --forks 6 setup-infrastructure.yml --limit @/root/setup-infrastructure.retry
+  shell: openstack-ansible --forks 1 setup-infrastructure.yml --limit @/root/setup-infrastructure.retry
   args:
     chdir: /opt/openstack-ansible/playbooks
     removes: /root/setup-infrastructure.retry
@@ -49,13 +49,13 @@
   shell: /vagrant/galera_haproxy.sh
 
 - name: Run OpenStack Installation Playbooks
-  shell: openstack-ansible --forks 6 setup-openstack.yml
+  shell: openstack-ansible --forks 2 setup-openstack.yml
   ignore_errors: yes
   args:
     chdir: /opt/openstack-ansible/playbooks
 
 - name: Backup Run OpenStack Installation Playbooks
-  shell: openstack-ansible --forks 6 setup-openstack.yml --limit @/root/setup-openstack.retry
+  shell: openstack-ansible --forks 1 setup-openstack.yml --limit @/root/setup-openstack.retry
   args:
     chdir: /opt/openstack-ansible/playbooks
     removes: /root/setup-openstack.retry

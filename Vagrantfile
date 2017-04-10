@@ -36,7 +36,7 @@ Vagrant.configure("2") do |config|
   config.vm.provider :vmware_workstation do |vmware, override|
     # If we're running Workstation (i.e. Linux)
     if Vagrant.has_plugin?("vagrant-triggers")
-      config.trigger.before :up do
+      override.trigger.before :up do
         puts "[+] INFO: Ensuring /dev/vmnet* are correct to allow promiscuous mode."
         puts "[+]       Needed for access to containers on different VMs."
         run "./fix_vmnet.sh"
@@ -86,7 +86,7 @@ Vagrant.configure("2") do |config|
 
   nodes.each do |prefix, (count, ip_start)|
     count.times do |i|
-      if prefix == "compute" or prefix == "controller"
+      if prefix == "compute" or prefix == "controller" or prefix == "logging"
         hostname = "%s-%02d" % [prefix, (i+1)]
       else
         hostname = "%s" % [prefix, (i+1)]
@@ -103,14 +103,16 @@ Vagrant.configure("2") do |config|
 
 	# Logging host is also the deployment server, so this will have the master SSH key which then gets copied
 	# Also the first to boot, so get that to set the keys to be used.
-	if prefix == "logging"
+	if hostname == "logging-01"
 	  box.vm.provision :shell, :path => "masterkey.sh"
 	else
 	  box.vm.provision :shell, :path => "clientkey.sh"
 	end
 
+	box.vm.provision :shell, :path => "hosts.sh"
+
 	# Order is important - this is the last "prefix" (vm) to load up, so execute last
-        if prefix == "compute"
+        if hostname == "compute-01"
           box.vm.provision :ansible do |ansible|
             # Disable default limit to connect to all the machines
             ansible.limit = "all"
@@ -175,7 +177,7 @@ Vagrant.configure("2") do |config|
           vbox.customize ["modifyvm", :id, "--cpus", 1]
           if prefix == "controller"
             vbox.customize ["modifyvm", :id, "--memory", 3172]
-            vbox.customize ["modifyvm", :id, "--cpus", 2]
+            vbox.customize ["modifyvm", :id, "--cpus", 1]
           end
           if prefix == "compute"
             vbox.customize ["modifyvm", :id, "--memory", 3172]

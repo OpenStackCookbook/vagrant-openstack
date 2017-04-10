@@ -1,0 +1,12 @@
+---
+- name: Run OpenStack Install
+  hosts: logging
+  user: vagrant
+  become_user: root
+  become_method: sudo
+
+  roles:
+    - getplaybooks
+    - installansible
+    - configuredeployment
+    - runplaybooks

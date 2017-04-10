@@ -11,7 +11,7 @@
     - networking
 
 - name: Run OpenStack Installation
-  hosts: logging
+  hosts: logging-01
   user: vagrant
   become_user: root
   become_method: sudo

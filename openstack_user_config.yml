@@ -111,7 +111,7 @@ compute_hosts:
 #          volume_backend_name: LVM_iSCSI
 
 log_hosts:
-  logging:
+  logging-01:
     ip: 172.29.236.9
 
 network_hosts:

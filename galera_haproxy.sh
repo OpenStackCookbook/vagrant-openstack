@@ -16,4 +16,3 @@
                 echo "Check MariaDB/Galera. Unable to connect."
                 exit 1
         fi
-}
