@@ -10,4 +10,6 @@
     update_cache: yes
 
 - name: Upgrade Ubuntu Packages
-  apt: upgrade=safe
+  apt:
+    upgrade: safe
+    force: yes
