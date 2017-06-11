@@ -4,7 +4,11 @@
     update_cache: yes
 
 - name: Install Pre-Req Packages
-  apt: name={{item}} state=installed
+  apt:
+    name: {{item}}
+    state: installed
+    install_recommends: yes
+    force: yes
   with_items:
        - bridge-utils 
        - debootstrap 
