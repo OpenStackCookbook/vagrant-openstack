@@ -6,6 +6,7 @@
   become_method: sudo
 
   roles:
+    - common
     - upgrade
     - prereqs
     - networking
