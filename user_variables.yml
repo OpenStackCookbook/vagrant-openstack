@@ -92,3 +92,5 @@ global_environment_variables:
    #http_proxy: "http://172.29.236.1:3128"
    https_proxy: "http://172.29.236.1:3142"
    no_proxy: "localhost,127.0.0.1,172.29.236.1,172.29.236.0/24"
+
+apply_security_hardening: true

@@ -2,20 +2,17 @@
 - name: Prep VMs for OpenStack
   hosts: all
   user: vagrant
-  become_user: root
-  become_method: sudo
+  become: true
 
   roles:
-    - common
-    - upgrade
     - prereqs
+    - upgrade
     - networking
 
 - name: Run OpenStack Installation
-  hosts: logging-01
+  hosts: controller-01
   user: vagrant
-  become_user: root
-  become_method: sudo
+  become: true
 
   roles:
     - getplaybooks

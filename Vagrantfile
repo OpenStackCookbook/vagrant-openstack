@@ -19,9 +19,8 @@
 # eth4 - br-vxlan (Neutron VXLAN Tunnel network) 172.29.240.0/24
 
 nodes = {
-    'logging'  => [1, 9],
-    'controller' => [1, 10],
     'compute'  => [1, 13],
+    'controller' => [1, 10]
 }
 
 Vagrant.configure("2") do |config|
@@ -30,7 +29,8 @@ Vagrant.configure("2") do |config|
   config.hostmanager.manage_guest = true
     
   # Defaults (VirtualBox)
-  config.vm.box = "bunchc/trusty-x64"
+  #config.vm.box = "bunchc/trusty-x64"
+  config.vm.box = "velocity42/xenial64"
   config.vm.synced_folder ".", "/vagrant", type: "nfs"
 
   config.vm.provider :vmware_workstation do |vmware, override|
@@ -50,7 +50,8 @@ Vagrant.configure("2") do |config|
 
   # VMware Fusion / Workstation
   config.vm.provider :vmware_fusion or config.vm.provider :vmware_workstation do |vmware, override|
-    override.vm.box = "bunchc/trusty-x64"
+    #override.vm.box = "bunchc/trusty-x64"
+    override.vm.box = "velocity42/xenial64"
     override.vm.synced_folder ".", "/vagrant", type: "nfs"
 
     # Fusion Performance Hacks
@@ -72,16 +73,16 @@ Vagrant.configure("2") do |config|
   #Default is 2200..something, but port 2200 is used by forescout NAC agent.
   config.vm.usable_port_range= 2800..2900 
 
-  if Vagrant.has_plugin?("vagrant-cachier")
-    config.cache.scope = :box
-    config.cache.enable :apt
-    config.cache.synced_folder_opts = {
-      type: :nfs,
-      mount_options: ['rw', 'vers=3', 'tcp', 'nolock']
-    }
-  else
-    puts "[-] WARN: This would be much faster if you ran vagrant plugin install vagrant-cachier first"
-  end
+  #if Vagrant.has_plugin?("vagrant-cachier")
+  #  config.cache.scope = :machine
+  #  config.cache.enable :apt
+  #  config.cache.synced_folder_opts = {
+  #    type: :nfs,
+  #    mount_options: ['rw', 'vers=3', 'nolock', 'async']
+  #  }
+  #else
+  #  puts "[-] WARN: This would be much faster if you ran vagrant plugin install vagrant-cachier first"
+  #end
 
 
   nodes.each do |prefix, (count, ip_start)|
@@ -103,7 +104,7 @@ Vagrant.configure("2") do |config|
 
 	# Logging host is also the deployment server, so this will have the master SSH key which then gets copied
 	# Also the first to boot, so get that to set the keys to be used.
-	if hostname == "logging-01"
+	if hostname == "controller-01"
 	  box.vm.provision :shell, :path => "masterkey.sh"
 	else
 	  box.vm.provision :shell, :path => "clientkey.sh"
@@ -112,7 +113,7 @@ Vagrant.configure("2") do |config|
 	box.vm.provision :shell, :path => "hosts.sh"
 
 	# Order is important - this is the last "prefix" (vm) to load up, so execute last
-        if hostname == "compute-01"
+        if hostname == "controller-01"
           box.vm.provision :ansible do |ansible|
             # Disable default limit to connect to all the machines
             ansible.limit = "all"
@@ -173,14 +174,14 @@ Vagrant.configure("2") do |config|
         box.vm.provider :virtualbox do |vbox|
           # Defaults
 	  vbox.linked_clone = true if Vagrant::VERSION =~ /^1.8/
-          vbox.customize ["modifyvm", :id, "--memory", 3172]
+          vbox.customize ["modifyvm", :id, "--memory", 4096]
           vbox.customize ["modifyvm", :id, "--cpus", 1]
           if prefix == "controller"
-            vbox.customize ["modifyvm", :id, "--memory", 3172]
+            vbox.customize ["modifyvm", :id, "--memory", 5172]
             vbox.customize ["modifyvm", :id, "--cpus", 1]
           end
           if prefix == "compute"
-            vbox.customize ["modifyvm", :id, "--memory", 3172]
+            vbox.customize ["modifyvm", :id, "--memory", 4096]
             vbox.customize ["modifyvm", :id, "--cpus", 1]
           end
           vbox.customize ["modifyvm", :id, "--nicpromisc2", "allow-all"]

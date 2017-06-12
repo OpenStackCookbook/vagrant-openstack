@@ -1,4 +1,17 @@
 ---
+- name: Fix Python pkg_resources
+  shell: apt-get install --reinstall python-pkg-resources
+  become: true
+
+- name: Fix Python setuptools
+  shell: pip install -U setuptools
+  become: true
+
+- file:
+    path: /usr/local/lib/python2.7/dist-packages/easy-install.pth
+    state: touch
+    mode: "u=rw,g=r,o=r"
+
 - name: Install Ansible
   shell: scripts/bootstrap-ansible.sh
   args:

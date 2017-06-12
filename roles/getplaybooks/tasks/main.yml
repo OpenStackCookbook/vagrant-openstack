@@ -2,4 +2,4 @@
 - name: Get OpenStack Playbooks
   git: repo=https://github.com/openstack/openstack-ansible.git
        dest=/opt/openstack-ansible
-       version=11.0.4
+       version=15.1.4

@@ -11,7 +11,7 @@ used_ips:
 global_overrides:
   internal_lb_vip_address: 172.29.236.10
   external_lb_vip_address: 192.168.100.10
-  lb_name: logging
+  lb_name: controller
   tunnel_bridge: "br-vxlan"
   management_bridge: "br-mgmt"
   provider_networks:
@@ -111,8 +111,8 @@ compute_hosts:
 #          volume_backend_name: LVM_iSCSI
 
 log_hosts:
-  logging-01:
-    ip: 172.29.236.9
+  controller-01:
+    ip: 172.29.236.10
 
 network_hosts:
   controller-01:
