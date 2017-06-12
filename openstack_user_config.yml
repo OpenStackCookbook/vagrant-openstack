@@ -130,7 +130,3 @@ network_hosts:
 #    ip: 172.29.236.11
 #  controller-03:
 #    ip: 172.29.236.12
-
-haproxy_hosts:
-  controller-01:
-    ip: 172.29.236.10

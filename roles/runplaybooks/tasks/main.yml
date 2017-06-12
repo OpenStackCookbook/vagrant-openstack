@@ -12,26 +12,26 @@
     removes: /root/setup-hosts.retry
 
 
-- name: Run HA Proxy Install
-  shell: openstack-ansible --forks 2 haproxy-install.yml
-  ignore_errors: yes
-  args:  
-    chdir: /opt/openstack-ansible/playbooks
+#- name: Run HA Proxy Install
+#  shell: openstack-ansible --forks 2 haproxy-install.yml
+#  ignore_errors: yes
+#  args:  
+#    chdir: /opt/openstack-ansible/playbooks
+#
+#- name: Backup Run HA Proxy Install
+#  shell: openstack-ansible --forks 2 haproxy-install.yml --limit @/root/haproxy-install.retry
+#  args:  
+#    chdir: /opt/openstack-ansible/playbooks
+#    removes: /root/haproxy-install.retry
+#
+#- name: Ensure HA Proxy Conf Directory exists
+#  file: path=/etc/haproxy/conf.d state=directory mode=0755
+#
+#- name: Drop HA Proxy Stats Config in place
+#  command: cp /vagrant/haproxy_stats /etc/haproxy/conf.d/haproxy_stats
 
-- name: Backup Run HA Proxy Install
-  shell: openstack-ansible --forks 2 haproxy-install.yml --limit @/root/haproxy-install.retry
-  args:  
-    chdir: /opt/openstack-ansible/playbooks
-    removes: /root/haproxy-install.retry
-
-- name: Ensure HA Proxy Conf Directory exists
-  file: path=/etc/haproxy/conf.d state=directory mode=0755
-
-- name: Drop HA Proxy Stats Config in place
-  command: cp /vagrant/haproxy_stats /etc/haproxy/conf.d/haproxy_stats
-
-- name: Fix Galera to work with VMs
-  shell: /vagrant/fix_galera.sh
+#- name: Fix Galera to work with VMs
+#  shell: /vagrant/fix_galera.sh
 
 - name: Run Infrastructure Playbooks
   shell: openstack-ansible --forks 2 setup-infrastructure.yml
