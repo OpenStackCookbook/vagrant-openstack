@@ -12,11 +12,11 @@
     removes: /root/setup-hosts.retry
 
 
-#- name: Run HA Proxy Install
-#  shell: openstack-ansible --forks 2 haproxy-install.yml
-#  ignore_errors: yes
-#  args:  
-#    chdir: /opt/openstack-ansible/playbooks
+- name: Run HA Proxy Install
+  shell: openstack-ansible --forks 2 haproxy-install.yml
+  ignore_errors: no
+  args:  
+    chdir: /opt/openstack-ansible/playbooks
 #
 #- name: Backup Run HA Proxy Install
 #  shell: openstack-ansible --forks 2 haproxy-install.yml --limit @/root/haproxy-install.retry
