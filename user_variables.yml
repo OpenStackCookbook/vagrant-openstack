@@ -74,10 +74,10 @@ pip_install_options: "--trusted-host 172.29.236.10"
 
 
 ## LXC options
-lxc_container_caches:
+#lxc_container_caches:
 #  - url: "{{ openstack_upstream_url }}/container_images/rpc-trusty-container.tgz"
-  - url: "172.29.236.1/mirror/container_images/rpc-trusty-container.tgz"
-    name: "trusty.tgz"
+#  - url: "172.29.236.1/mirror/container_images/rpc-trusty-container.tgz"
+#    name: "trusty.tgz"
 
 ## Example environment variable setup:
 #proxy_env_url: http://nas:3128/
@@ -87,12 +87,12 @@ lxc_container_caches:
 #HTTPS_PROXY: "{{ proxy_env_url }}"
 #NO_PROXY: "{{ no_proxy_env }}"
 
-global_environment_variables:
-   HTTP_PROXY: "http://172.29.236.1:3128"
-   HTTPS_PROXY: "http://172.29.236.1:3128"
-   NO_PROXY: "localhost,127.0.0.1,172.29.236.1,172.29.236.0/24"
-   http_proxy: "http://172.29.236.1:3128"
-   https_proxy: "http://172.29.236.1:3128"
-   no_proxy: "localhost,127.0.0.1,172.29.236.1,172.29.236.0/24"
+#global_environment_variables:
+#   HTTP_PROXY: "http://172.29.236.1:3128"
+#   HTTPS_PROXY: "http://172.29.236.1:3128"
+#   NO_PROXY: "localhost,127.0.0.1,172.29.236.1,172.29.236.0/24"
+#   http_proxy: "http://172.29.236.1:3128"
+#   https_proxy: "http://172.29.236.1:3128"
+#   no_proxy: "localhost,127.0.0.1,172.29.236.1,172.29.236.0/24"
 
 apply_security_hardening: false
