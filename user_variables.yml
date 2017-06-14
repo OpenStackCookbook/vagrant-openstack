@@ -56,10 +56,11 @@ ssl_cipher_suite: "ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AE
 #rabbitmq_user_ssl_ca_cert: <path to cert on ansible deployment host>
 
 ## Repo server
-repo_service_user_name: nginx
-repo_service_home_folder: /var/www
-repo_server_port: 80
-repo_pip_default_index: "http://{{ openstack_upstream_domain }}/mirror/pools"
+#repo_service_user_name: nginx
+#repo_service_home_folder: /var/www
+#repo_server_port: 80
+#repo_pip_default_index: "http://{{ openstack_upstream_domain }}/mirror/pools"
+pip_install_options: "--trusted-host 172.29.236.10"
 
 
 ## OpenStack source options
@@ -74,7 +75,8 @@ repo_pip_default_index: "http://{{ openstack_upstream_domain }}/mirror/pools"
 
 ## LXC options
 lxc_container_caches:
-  - url: "{{ openstack_upstream_url }}/container_images/rpc-trusty-container.tgz"
+#  - url: "{{ openstack_upstream_url }}/container_images/rpc-trusty-container.tgz"
+  - url: "172.29.236.1/mirror/container_images/rpc-trusty-container.tgz"
     name: "trusty.tgz"
 
 ## Example environment variable setup:
@@ -85,12 +87,12 @@ lxc_container_caches:
 #HTTPS_PROXY: "{{ proxy_env_url }}"
 #NO_PROXY: "{{ no_proxy_env }}"
 
-#global_environment_variables:
-#   HTTP_PROXY: "http://172.29.236.1:3128"
-#   HTTPS_PROXY: "http://172.29.236.1:3142"
-#   NO_PROXY: "localhost,127.0.0.1,172.29.236.1,172.29.236.0/24"
-#   http_proxy: "http://172.29.236.1:3128"
-#   https_proxy: "http://172.29.236.1:3142"
-#   no_proxy: "localhost,127.0.0.1,172.29.236.1,172.29.236.0/24"
+global_environment_variables:
+   HTTP_PROXY: "http://172.29.236.1:3128"
+   HTTPS_PROXY: "http://172.29.236.1:3128"
+   NO_PROXY: "localhost,127.0.0.1,172.29.236.1,172.29.236.0/24"
+   http_proxy: "http://172.29.236.1:3128"
+   https_proxy: "http://172.29.236.1:3128"
+   no_proxy: "localhost,127.0.0.1,172.29.236.1,172.29.236.0/24"
 
 apply_security_hardening: false

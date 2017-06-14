@@ -123,9 +123,9 @@ network_hosts:
 #    ip: 172.29.236.12
 
 # User defined Repository Hosts, this is an optional group
-# repo-infra_hosts:
-#   controller-01:
-#     ip: 172.29.236.10
+repo-infra_hosts:
+   controller-01:
+     ip: 172.29.236.10
 #  controller-02:
 #    ip: 172.29.236.11
 #  controller-03:
