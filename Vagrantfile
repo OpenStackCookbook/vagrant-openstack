@@ -1,15 +1,9 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-# Uncomment the next line to force use of VirtualBox provider when Fusion provider is present
-# ENV['VAGRANT_DEFAULT_PROVIDER'] = 'virtualbox'
-
-# Nodes: logging 	192.168.100.9
+# Nodes: 
 #        controller-01 	192.168.100.10
-#        controller-02 	192.168.100.11 # DISABLED
-#        controller-03 	192.168.100.12 # DISABLED
 #        compute-01 	192.168.100.13
-#        compute-02 	192.168.100.14 # DISABLED
 
 # Interfaces
 # eth0 - nat (used by VMware/VirtualBox)
@@ -29,7 +23,6 @@ Vagrant.configure("2") do |config|
   config.hostmanager.manage_guest = true
     
   # Defaults (VirtualBox)
-  #config.vm.box = "bunchc/trusty-x64"
   config.vm.box = "velocity42/xenial64"
   config.vm.synced_folder ".", "/vagrant", type: "nfs"
 
@@ -50,7 +43,6 @@ Vagrant.configure("2") do |config|
 
   # VMware Fusion / Workstation
   config.vm.provider :vmware_fusion or config.vm.provider :vmware_workstation do |vmware, override|
-    #override.vm.box = "bunchc/trusty-x64"
     override.vm.box = "velocity42/xenial64"
     override.vm.synced_folder ".", "/vagrant", type: "nfs"
 
@@ -72,18 +64,6 @@ Vagrant.configure("2") do |config|
 
   #Default is 2200..something, but port 2200 is used by forescout NAC agent.
   config.vm.usable_port_range= 2800..2900 
-
-  #if Vagrant.has_plugin?("vagrant-cachier")
-  #  config.cache.scope = :machine
-  #  config.cache.enable :apt
-  #  config.cache.synced_folder_opts = {
-  #    type: :nfs,
-  #    mount_options: ['rw', 'vers=3', 'nolock', 'async']
-  #  }
-  #else
-  #  puts "[-] WARN: This would be much faster if you ran vagrant plugin install vagrant-cachier first"
-  #end
-
 
   nodes.each do |prefix, (count, ip_start)|
     count.times do |i|
@@ -121,28 +101,15 @@ Vagrant.configure("2") do |config|
             ansible.extra_vars = { ansible_ssh_user: 'vagrant' }
             ansible.sudo = true
           end
-	  #box.vm.provision :shell, :path => "bootstrap-install.sh"
         end 
-
-        #box.vm.provision :shell, :path => "hosts.sh"
-        #box.vm.provision :shell, :path => "install-prereqs.sh"
-        #box.vm.provision :shell, :path => "networking.sh"
-
-	# Assumption is that compute-01 will run last, change to suit
-	# This will shell into logging to kickstart the install from it
-	#if hostname == "compute-01"
-	#  box.vm.provision :shell, :path => "bootstrap-install.sh"
-	#end
-
-        # box.vm.provision :shell, :path => "#{prefix}.sh"
 
         # If using Fusion
         box.vm.provider "vmware_fusion" do |v|
 	  v.linked_clone = true if Vagrant::VERSION =~ /^1.8/
           v.vmx["memsize"] = 3172
           if prefix == "controller"
-            v.vmx["memsize"] = 4096
-            v.vmx["numvcpus"] = "1"
+            v.vmx["memsize"] = 6144
+            v.vmx["numvcpus"] = "2"
           end
           if prefix == "compute"
             v.vmx["memsize"] = 4096
@@ -154,17 +121,13 @@ Vagrant.configure("2") do |config|
         # If using Workstation
         box.vm.provider "vmware_workstation" do |v|
 	  v.linked_clone = true if Vagrant::VERSION =~ /^1.8/
-          v.vmx["memsize"] = 1024
-          if prefix == "logging"
-            v.vmx["memsize"] = 3172
-            v.vmx["numvcpus"] = "1"
-          end
+          v.vmx["memsize"] = 2048
           if prefix == "controller"
-            v.vmx["memsize"] = 3172
-            v.vmx["numvcpus"] = "1"
+            v.vmx["memsize"] = 6144
+            v.vmx["numvcpus"] = "2"
           end
           if prefix == "compute"
-            v.vmx["memsize"] = 3172
+            v.vmx["memsize"] = 4096
             v.vmx["numvcpus"] = "1"
             v.vmx["vhv.enable"] = "TRUE"
           end

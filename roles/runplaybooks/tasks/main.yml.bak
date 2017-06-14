@@ -1,3 +1,0 @@
----
-- name: Run OpenStack Ansible Playbooks
-  shell: /vagrant/install-openstack2.sh
