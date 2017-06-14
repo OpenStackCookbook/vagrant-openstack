@@ -40,3 +40,4 @@
       shell: openstack-ansible --forks 1 setup-openstack.yml > /vagrant/setup-openstack.log
       args:
         chdir: /opt/openstack-ansible/playbooks
+

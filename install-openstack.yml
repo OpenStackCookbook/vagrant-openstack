@@ -19,3 +19,12 @@
     - installansible
     - configuredeployment
     - runplaybooks
+
+- name: Reload libvirtd
+  hosts: compute-01
+  user: vagrant
+  become: true
+
+  tasks:
+    - command: "systemctl restart libvirtd"
+
