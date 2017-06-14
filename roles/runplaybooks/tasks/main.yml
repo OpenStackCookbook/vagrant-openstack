@@ -1,67 +1,42 @@
 ---
-- name: Run Setup Hosts Playbook
-  shell: openstack-ansible setup-hosts.yml > /vagrant/setup-hosts.log
-  ignore_errors: no
-  args:
-    chdir: /opt/openstack-ansible/playbooks
-    creates: /vagrant/setup-hosts.log
+- block:
+    - name: Run Setup Hosts Playbook
+      shell: openstack-ansible setup-hosts.yml > /vagrant/setup-hosts.log
+      args:
+        chdir: /opt/openstack-ansible/playbooks
+        creates: /vagrant/setup-hosts.log
 
-#- name: Backup Run of Setup Hosts Playbook
-#  shell: openstack-ansible setup-hosts.yml --limit @/root/setup-hosts.retry >> /vagrant/setup-hosts.log
-#  args:
-#    chdir: /opt/openstack-ansible/playbooks
-#    removes: /root/setup-hosts.retry
+  rescue:
+    - name: Running openstack-ansible setup-hosts.yml
+      shell: openstack-ansible setup-hosts.yml > /vagrant/setup-hosts.log
+      args:
+        chdir: /opt/openstack-ansible/playbooks
 
-#- name: Run HA Proxy Install
-#  shell: openstack-ansible --forks 1 haproxy-install.yml > /vagrant/haproxy-install.log
-#  ignore_errors: yes
-#  args:  
-#    chdir: /opt/openstack-ansible/playbooks
-#    creates: /vagrant/haproxy-install.log
-#
-#- pause:
-#    seconds: 10
-#
-#- name: Backup Run HA Proxy Install
-#  shell: openstack-ansible --forks 2 haproxy-install.yml --limit @/root/haproxy-install.retry
-#  args:  
-#    chdir: /opt/openstack-ansible/playbooks
-#    removes: /root/haproxy-install.retry
-#
-#- name: Ensure HA Proxy Conf Directory exists
-#  file: path=/etc/haproxy/conf.d state=directory mode=0755
-#
-#- name: Drop HA Proxy Stats Config in place
-#  command: cp /vagrant/haproxy_stats /etc/haproxy/conf.d/haproxy_stats
+- block:
+    - name: Run Infrastructure Playbooks
+      shell: openstack-ansible --forks 2  setup-infrastructure.yml > /vagrant/setup-infrastructure.log
+      args:
+        chdir: /opt/openstack-ansible/playbooks
+        creates: /vagrant/setup-infrastructure.log
 
-#- name: Fix Galera to work with VMs
-#  shell: /vagrant/fix_galera.sh
-
-- name: Run Infrastructure Playbooks
-  shell: openstack-ansible --forks 1 setup-infrastructure.yml > /vagrant/setup-infrastructure.log
-  ignore_errors: no
-  args:
-    chdir: /opt/openstack-ansible/playbooks
-    creates: /vagrant/setup-infrastructure.log
-
-#- name: Backup Run Infrastructure Playbooks
-#  shell: openstack-ansible --forks 1 setup-infrastructure.yml --limit @/root/setup-infrastructure.retry >> /vagrant/setup-infrastructure.log
-#  args:
-#    chdir: /opt/openstack-ansible/playbooks
-#    removes: /root/setup-infrastructure.retry
+  rescue:
+    - name: Running openstack-ansible setup-infrastructure.yml
+      shell: openstack-ansible --forks 1 setup-infrastructure.yml > /vagrant/setup-infrastructure.log
+      args:
+        chdir: /opt/openstack-ansible/playbooks
 
 - name: Configure Galera for HA Proxy
   shell: /vagrant/galera_haproxy.sh
 
-- name: Run OpenStack Installation Playbooks
-  shell: openstack-ansible --forks 1 setup-openstack.yml > /vagrant/setup-openstack.log
-  ignore_errors: no
-  args:
-    chdir: /opt/openstack-ansible/playbooks
-    creates: /vagrant/setup-openstack.log
+- block:
+    - name: Run OpenStack Playbooks
+      shell: openstack-ansible --forks 2  setup-openstack.yml > /vagrant/setup-openstack.log
+      args:
+        chdir: /opt/openstack-ansible/playbooks
+        creates: /vagrant/setup-openstack.log
 
-#- name: Backup Run OpenStack Installation Playbooks
-#  shell: openstack-ansible --forks 1 setup-openstack.yml --limit @/root/setup-openstack.retry >> /vagrant/setup-openstack.log
-#  args:
-#    chdir: /opt/openstack-ansible/playbooks
-#    removes: /root/setup-openstack.retry
+  rescue:
+    - name: Running openstack-ansible setup-openstack.yml
+      shell: openstack-ansible --forks 1 setup-openstack.yml > /vagrant/setup-openstack.log
+      args:
+        chdir: /opt/openstack-ansible/playbooks

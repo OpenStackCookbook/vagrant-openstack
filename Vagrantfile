@@ -177,8 +177,8 @@ Vagrant.configure("2") do |config|
           vbox.customize ["modifyvm", :id, "--memory", 2048]
           vbox.customize ["modifyvm", :id, "--cpus", 1]
           if prefix == "controller"
-            vbox.customize ["modifyvm", :id, "--memory", 5172]
-            vbox.customize ["modifyvm", :id, "--cpus", 1]
+            vbox.customize ["modifyvm", :id, "--memory", 6144]
+            vbox.customize ["modifyvm", :id, "--cpus", 2]
           end
           if prefix == "compute"
             vbox.customize ["modifyvm", :id, "--memory", 4096]

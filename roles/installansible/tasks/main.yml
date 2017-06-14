@@ -1,7 +1,13 @@
 ---
+#- name: Fix Python pkg_resources
+#  shell: apt-get install --reinstall python-pkg-resources
+#  become: true
+
 - name: Fix Python pkg_resources
-  shell: apt-get install --reinstall python-pkg-resources
-  become: true
+  apt: 
+    name: python-pkg-resources
+    state: present
+    force: true
 
 - name: Fix Python setuptools
   shell: pip install -U setuptools
