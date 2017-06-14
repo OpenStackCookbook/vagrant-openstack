@@ -1,6 +1,7 @@
 # ansible-openstack
-Vagrant environment that uses https://github.com/stackforge/os-ansible-deployment for deploying OpenStack.<br>
-By Kevin Jackson (@itarchitectkev) and Cody Bunch (@bunchc)<br>
+Vagrant environment that uses https://github.com/openstack/openstack-ansible for deploying OpenStack.<br>
+By Kevin Jackson (@itarchitectkev)<br>
+   Cody Bunch (@bunchc)
 
 # Requirements
 - Vagrant (recommended 1.8+)
