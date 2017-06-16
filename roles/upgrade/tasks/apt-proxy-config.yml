@@ -1,0 +1,2 @@
+- name: Apt Proxy Config
+  template: src=01squid.j2 dest=/etc/apt/apt.conf.d/01squid.conf owner=root group=root mode=0644

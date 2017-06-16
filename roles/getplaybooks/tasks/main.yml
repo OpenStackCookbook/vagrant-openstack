@@ -1,5 +1,5 @@
 ---
 - name: Get OpenStack Playbooks
-  git: repo=https://github.com/openstack/openstack-ansible.git
-       dest=/opt/openstack-ansible
-       version=15.1.4
+  include_vars: config.yml
+
+- include: get-playbooks.yml
