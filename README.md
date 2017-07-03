@@ -1,7 +1,8 @@
 # ansible-openstack
 Vagrant environment that uses https://github.com/openstack/openstack-ansible for deploying OpenStack.<br>
-By Kevin Jackson (@itarchitectkev)<br>
-   Cody Bunch (@bunchc)
+Contributors
+- Kevin Jackson (@itarchitectkev)
+- Cody Bunch (@bunchc)
 
 # Requirements
 - Vagrant (recommended 1.8+)
@@ -10,7 +11,7 @@ By Kevin Jackson (@itarchitectkev)<br>
 
 # Instructions
 ```
-git clone https://github.com/uksysadmin/ansible-openstack.git
+git clone https://github.com/OpenStackCookbook/vagrant-openstack.git
 cd ansible-openstack
 vagrant up
 ```
@@ -24,7 +25,8 @@ Details of access can be found in the controller-01 utility container:
 ```
 vagrant ssh controller-01
 sudo -i
-lxc-attach -n (lxc-ls | grep utility)
+lxc-attach -n $(lxc-ls | grep utility)
+cat openrc
 ```
 
 # Environment
