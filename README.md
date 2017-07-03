@@ -1,4 +1,4 @@
-# ansible-openstack
+# vagrant-openstack
 Vagrant environment that uses https://github.com/openstack/openstack-ansible for deploying OpenStack.<br>
 Contributors
 - Kevin Jackson (@itarchitectkev)
