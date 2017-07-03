@@ -1,3 +1,0 @@
----
-- name: Run Bootstrap Script
-  shell: /vagrant/install-openstack.sh

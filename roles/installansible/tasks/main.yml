@@ -1,8 +1,4 @@
 ---
-#- name: Fix Python pkg_resources
-#  shell: apt-get install --reinstall python-pkg-resources
-#  become: true
-
 - name: Fix Python pkg_resources
   apt: 
     name: python-pkg-resources
