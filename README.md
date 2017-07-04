@@ -25,7 +25,7 @@ Details of access can be found in the controller-01 utility container:
 ```
 vagrant ssh controller-01
 sudo -i
-lxc-attach -n $(lxc-ls | grep utility)
+lxc-attach -n $(lxc-ls -f | awk '/utility/ {print $1}')
 cat openrc
 ```
 
