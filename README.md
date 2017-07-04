@@ -12,7 +12,7 @@ Contributors
 # Instructions
 ```
 git clone https://github.com/OpenStackCookbook/vagrant-openstack.git
-cd ansible-openstack
+cd vagrant-openstack
 vagrant up
 ```
 
