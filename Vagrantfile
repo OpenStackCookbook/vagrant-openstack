@@ -67,7 +67,7 @@ Vagrant.configure("2") do |config|
 
   nodes.each do |prefix, (count, ip_start)|
     count.times do |i|
-      if prefix == "compute" or prefix == "controller" or prefix == "logging"
+      if prefix == "compute" or prefix == "controller"
         hostname = "%s-%02d" % [prefix, (i+1)]
       else
         hostname = "%s" % [prefix, (i+1)]
@@ -82,8 +82,7 @@ Vagrant.configure("2") do |config|
       	box.vm.network :private_network, ip: "192.168.100.#{ip_start+i}", :netmask => "255.255.255.0" 
       	box.vm.network :private_network, ip: "172.29.240.#{ip_start+i}", :netmask => "255.255.255.0" 
 
-	# Logging host is also the deployment server, so this will have the master SSH key which then gets copied
-	# Also the first to boot, so get that to set the keys to be used.
+	# Create ssh-keypair for Ansible to function
 	if hostname == "compute-01"
 	  box.vm.provision :shell, :path => "masterkey.sh"
 	else

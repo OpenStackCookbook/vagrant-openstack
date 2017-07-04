@@ -19,3 +19,5 @@ ifup eth3
 ifup eth4
 ip addr flush dev eth1
 ip addr flush dev eth4
+ip link set eth3 promisc on
+ip link set eth4 promisc on
