@@ -57,7 +57,7 @@ global_overrides:
         container_bridge: "br-vlan"
         container_type: "veth"
         container_interface: "eth12"
-        host_bind_override: "eth2"
+        host_bind_override: "eth3"
         type: "flat"
         net_name: "flat"
 

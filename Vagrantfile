@@ -149,6 +149,7 @@ Vagrant.configure("2") do |config|
           vbox.customize ["modifyvm", :id, "--nicpromisc2", "allow-all"]
           vbox.customize ["modifyvm", :id, "--nicpromisc3", "allow-all"]
           vbox.customize ["modifyvm", :id, "--nicpromisc4", "allow-all"]
+          vbox.customize ["modifyvm", :id, "--nicpromisc5", "allow-all"]
         end
       end
     end
