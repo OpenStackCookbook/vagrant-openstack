@@ -54,7 +54,7 @@ global_overrides:
     - network:
         group_binds:
           - neutron_linuxbridge_agent
-        container_bridge: "br-vlan"
+        container_bridge: "br-flat"
         container_type: "veth"
         container_interface: "eth12"
         host_bind_override: "eth3"

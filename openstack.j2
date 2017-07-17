@@ -18,6 +18,17 @@ iface br-vlan inet manual
     # Notice this bridge port is an Untagged host interface
     bridge_ports eth2
 
+# Bridge for flat network
+auto br-flat
+iface br-flat inet static
+    bridge_stp off
+    bridge_waitport 0
+    bridge_fd 0
+    bridge_ports eth3
+    address 192.168.100.__IP__
+    netmask 255.255.255.0
+    dns-nameservers 192.168.1.1
+
 # Bridge for vxlan network
 auto br-vxlan
 iface br-vxlan inet static
