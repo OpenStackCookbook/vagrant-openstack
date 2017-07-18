@@ -60,5 +60,7 @@ It assumes you have downloaded Cirros and Ubuntu Xenial. It will load them up, c
 It will also edit a heat template environment file based on the created networks.<br>
 Once run, execute:<br>
 ```
+. openrc
+./lab_environment_setup.sh
 openstack stack create -t cookbook.yaml -e cookbook-env.yaml myStack
 ```
