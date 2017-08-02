@@ -8,6 +8,7 @@ Contributors
 - Vagrant (recommended 1.8+)
 - VirtualBox 4.3+ (Tested on VirtualBox 5.1)
 - Git (to check out this environment)
+- NFSD enabled on Mac and Linux environments to allow guest /vagrant access
 
 # Instructions
 ```
