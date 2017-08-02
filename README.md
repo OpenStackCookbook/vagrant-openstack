@@ -6,8 +6,9 @@ Contributors
 
 # Requirements
 - Vagrant (recommended 1.8+)
-- Vagrant plugins - [an installation instruction](https://www.vagrantup.com/docs/plugins/usage.html)
+- Vagrant plugins - [Installation instructions](https://www.vagrantup.com/docs/plugins/usage.html)
   - [vagrant-hostmanager](https://github.com/devopsgroup-io/vagrant-hostmanager)  
+  - [vagrant-triggers](https://github.com/emyl/vagrant-triggers)
 - VirtualBox 4.3+ (Tested on VirtualBox 5.1)
 - Git (to check out this environment)
 - NFSD enabled on Mac and Linux environments to allow guest /vagrant access

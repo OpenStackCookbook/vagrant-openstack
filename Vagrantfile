@@ -18,9 +18,14 @@ nodes = {
 }
 
 Vagrant.configure("2") do |config|
-  config.hostmanager.enabled = true
-  config.hostmanager.manage_host = true
-  config.hostmanager.manage_guest = true
+  if Vagrant.has_plugin?("vagrant-hostmanager")
+    config.hostmanager.enabled = true
+    config.hostmanager.manage_host = true
+    config.hostmanager.manage_guest = true
+  else
+    raise "[-] ERROR: Please add vagrant-hostmanager plugin:  vagrant plugin install vagrant-hostmanager"
+  end
+     
     
   # Defaults (VirtualBox)
   config.vm.box = "velocity42/xenial64"
