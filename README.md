@@ -10,7 +10,7 @@ Additional Contributors:
 # Requirements
 - Vagrant (recommended 1.8+)
 - Vagrant plugins - [Installation instructions](https://www.vagrantup.com/docs/plugins/usage.html)
-  - [vagrant-hostmanager](https://github.com/devopsgroup-io/vagrant-hostmanager)  
+  - [vagrant-hostmanager](https://github.com/devopsgroup-io/vagrant-hostmanager)
   - [vagrant-triggers](https://github.com/emyl/vagrant-triggers)
 - VirtualBox 4.3+ (Tested on VirtualBox 5.1)
 - Git (to check out this environment)
@@ -69,5 +69,5 @@ Once run, execute:<br>
 ```
 . openrc
 ./lab_environment_setup.sh
-openstack stack create -t cookbook.yaml -e cookbook-env.yaml myStack
+openstack stack create -t cookbook.yml -e cookbook-env.yml myStack
 ```

@@ -1,7 +1,7 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-# Nodes: 
+# Nodes:
 #        controller-01 	192.168.100.10
 #        compute-01 	192.168.100.13
 
@@ -25,8 +25,8 @@ Vagrant.configure("2") do |config|
   else
     raise "[-] ERROR: Please add vagrant-hostmanager plugin:  vagrant plugin install vagrant-hostmanager"
   end
-     
-    
+
+
   # Defaults (VirtualBox)
   config.vm.box = "velocity42/xenial64"
   config.vm.synced_folder ".", "/vagrant", type: "nfs"
@@ -40,7 +40,7 @@ Vagrant.configure("2") do |config|
         run "./fix_vmnet.sh"
       end
     else
-      puts "[-] WARN: Please ensure /dev/vmnet* is group owned and writeable by you" 
+      puts "[-] WARN: Please ensure /dev/vmnet* is group owned and writeable by you"
       puts "[-]          sudo chmod chgrp <gid> /dev/vmnet*"
       puts "[-]          sudo chmod g+rw /dev/vmnet*"
     end
@@ -68,7 +68,7 @@ Vagrant.configure("2") do |config|
   end
 
   #Default is 2200..something, but port 2200 is used by forescout NAC agent.
-  config.vm.usable_port_range= 2800..2900 
+  config.vm.usable_port_range= 2800..2900
 
   nodes.each do |prefix, (count, ip_start)|
     count.times do |i|
@@ -83,9 +83,9 @@ Vagrant.configure("2") do |config|
       config.vm.define "#{hostname}" do |box|
         box.vm.hostname = "#{hostname}.cook.book"
         box.vm.network :private_network, ip: "172.29.236.#{ip_start+i}", :netmask => "255.255.255.0"
-        box.vm.network :private_network, ip: "10.10.0.#{ip_start+i}", :netmask => "255.255.255.0" 
-      	box.vm.network :private_network, ip: "192.168.100.#{ip_start+i}", :netmask => "255.255.255.0" 
-      	box.vm.network :private_network, ip: "172.29.240.#{ip_start+i}", :netmask => "255.255.255.0" 
+        box.vm.network :private_network, ip: "10.10.0.#{ip_start+i}", :netmask => "255.255.255.0"
+      	box.vm.network :private_network, ip: "192.168.100.#{ip_start+i}", :netmask => "255.255.255.0"
+      	box.vm.network :private_network, ip: "172.29.240.#{ip_start+i}", :netmask => "255.255.255.0"
 
 	# Create ssh-keypair for Ansible to function
 	if hostname == "compute-01"
@@ -105,7 +105,7 @@ Vagrant.configure("2") do |config|
             ansible.extra_vars = { ansible_ssh_user: 'vagrant' }
             ansible.sudo = true
           end
-        end 
+        end
 
         # If using Fusion
         box.vm.provider "vmware_fusion" do |v|

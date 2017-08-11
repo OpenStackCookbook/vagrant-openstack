@@ -1,6 +1,6 @@
 ---
 - name: Fix Python pkg_resources
-  apt: 
+  apt:
     name: python-pkg-resources
     state: present
     force: true

@@ -18,14 +18,14 @@ glance_default_store: file
 # `publicURL` to communicate with swift over the public network
 glance_swift_store_endpoint_type: internalURL
 
-## Glance Options 
-# Set default_store to "swift" if using Cloud Files 
+## Glance Options
+# Set default_store to "swift" if using Cloud Files
 # or swift backend or file to use NFS or local filesystem
 glance_notification_driver: noop
 
 ## Nova options
 nova_virt_type: qemu
-nova_cpu_allocation_ratio: 3.0 
+nova_cpu_allocation_ratio: 3.0
 nova_ram_allocation_ratio: 1.0
 # As this is a virtual env, don't lose precious memory to the VM itself!
 nova_reserved_host_memory_mb: 1024
