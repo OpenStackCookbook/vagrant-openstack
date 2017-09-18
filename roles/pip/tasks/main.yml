@@ -1,0 +1,15 @@
+---
+- name: Fix Python pkg_resources
+  apt: 
+    name: python-pkg-resources
+    state: present
+    force: true
+
+- name: Fix Python setuptools
+  shell: pip install -U setuptools
+  become: true
+
+- file:
+    path: /usr/local/lib/python2.7/dist-packages/easy-install.pth
+    state: touch
+    mode: "u=rw,g=r,o=r"

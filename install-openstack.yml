@@ -8,6 +8,7 @@
     - prereqs
     - upgrade
     - networking
+    - pip
 
 - name: Run OpenStack Installation
   hosts: controller-01

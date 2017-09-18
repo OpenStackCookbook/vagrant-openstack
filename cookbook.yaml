@@ -128,7 +128,8 @@ resources:
                     server Webserver2 %webserver2_ip% check
                     " >> /etc/haproxy/haproxy.cfg
             sed -i 's/ENABLED=0/ENABLED=1/g' /etc/default/haproxy
-            service haproxy start
+            systemctl stop haproxy
+            systemctl start haproxy
 
           params:
             "%webserver1_ip%": { get_attr: [ webserver1, first_address ] }

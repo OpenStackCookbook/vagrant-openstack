@@ -16,8 +16,5 @@
   args:
     chdir: /opt/openstack-ansible
 
-- name: Remove swift.yml
-  file: path=/etc/openstack_deploy/conf.d/swift.yml state=absent
-
 - name: Copy haproxy.yml
   command: cp /vagrant/haproxy.yml /etc/openstack_deploy/conf.d/haproxy.yml

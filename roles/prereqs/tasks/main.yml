@@ -28,3 +28,5 @@
        - libpython2.7-dev 
        - libffi-dev 
        - libssl-dev
+       - python-crypto
+       - python-yaml
