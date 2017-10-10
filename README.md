@@ -11,6 +11,7 @@ Additional Contributors:
 [![Vagrant Up Demo](https://asciinema.org/a/sPAcxfGUSAYsDJy9LTXGZoLR1.png)](https://asciinema.org/a/sPAcxfGUSAYsDJy9LTXGZoLR1)
 
 # Requirements
+- Ansible (recommended 2.4)
 - Vagrant (recommended 1.8+)
 - Vagrant plugins - [Installation instructions](https://www.vagrantup.com/docs/plugins/usage.html)
   - [vagrant-hostmanager](https://github.com/devopsgroup-io/vagrant-hostmanager)  
