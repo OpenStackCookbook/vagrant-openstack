@@ -101,3 +101,7 @@ pip_install_options: "--trusted-host 172.29.236.10"
 #   no_proxy: "localhost,127.0.0.1,172.29.236.1,172.29.236.0/24"
 
 apply_security_hardening: false
+
+neutron_plugin_base:
+  - router
+  - neutron_lbaas.services.loadbalancer.plugin.LoadBalancerPluginv2
