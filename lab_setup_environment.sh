@@ -9,12 +9,12 @@ UBUNTU=/vagrant/xenial-server-cloudimg-amd64-disk1.img
 
 if [ -f ${CIRROS} ]
 then
-	openstack image create --container-format bare --disk-format qcow2 --public --file ${CIRROS} cirros-image
+    openstack image create --container-format bare --disk-format qcow2 --public --file ${CIRROS} cirros-image
 fi
 
 if [ -f ${UBUNTU} ]
 then
-	openstack image create --container-format bare --disk-format qcow2 --public --file ${UBUNTU} xenial-image
+    openstack image create --container-format bare --disk-format qcow2 --public --file ${UBUNTU} xenial-image
 fi
 
 # Create a flavor
@@ -54,6 +54,6 @@ PUB_NET=$(openstack network list | awk '/GATEWAY_NET/ {print $2}')
 PRIV_NET=$(openstack network list | awk '/private/ {print $2}')
 PRIV_SUBNET=$(openstack subnet list | awk '/private/ {print $2}')
 
-sed -i "s/public_net_id.*/public_net_id: ${PUB_NET}/" cookbook-env.yaml 
-sed -i "s/private_net_id.*/private_net_id: ${PRIV_NET}/" cookbook-env.yaml 
-sed -i "s/private_subnet_id.*/private_subnet_id: ${PRIV_SUBNET}/" cookbook-env.yaml 
+sed -i "s/public_net_id.*/public_net_id: ${PUB_NET}/" cookbook-env.yml
+sed -i "s/private_net_id.*/private_net_id: ${PRIV_NET}/" cookbook-env.yml
+sed -i "s/private_subnet_id.*/private_subnet_id: ${PRIV_SUBNET}/" cookbook-env.yml

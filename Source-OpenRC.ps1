@@ -2,8 +2,8 @@
 .Synopsis
    Source an OpenStack OpenRC file.
 .DESCRIPTION
-   This script allows you to source an OpenRC file that can be downloaded from the 
-   OpenStack dashboard. After running the script you'll be able to use the OpenStack 
+   This script allows you to source an OpenRC file that can be downloaded from the
+   OpenStack dashboard. After running the script you'll be able to use the OpenStack
    command-line tools. These need to be installed separately.
 .PARAMETER LiteralPath
    The OpenRC file you downloaded from the OpenStack dashboard.
