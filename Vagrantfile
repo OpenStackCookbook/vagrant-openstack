@@ -3,7 +3,7 @@
 
 # Nodes:
 #        controller-01 	192.168.100.10
-#        compute-01 	192.168.100.13
+#        compute-01 	  192.168.100.13
 
 # Interfaces
 # eth0 - nat (used by VMware/VirtualBox)
@@ -113,7 +113,7 @@ Vagrant.configure("2") do |config|
 
         # If using Fusion
         box.vm.provider "vmware_fusion" do |v|
-	  v.linked_clone = true if Vagrant::VERSION =~ /^1.8/
+	        v.linked_clone = true if Vagrant::VERSION =~ /^1.8/
           v.vmx["memsize"] = 3172
           if prefix == "controller"
             v.vmx["memsize"] = 6144
@@ -128,7 +128,7 @@ Vagrant.configure("2") do |config|
 
         # If using Workstation
         box.vm.provider "vmware_workstation" do |v|
-	  v.linked_clone = true if Vagrant::VERSION =~ /^1.8/
+	        v.linked_clone = true if Vagrant::VERSION =~ /^1.8/
           v.vmx["memsize"] = 2048
           if prefix == "controller"
             v.vmx["memsize"] = 6144
@@ -144,7 +144,7 @@ Vagrant.configure("2") do |config|
         # Otherwise using VirtualBox
         box.vm.provider :virtualbox do |vbox|
           # Defaults
-	  vbox.linked_clone = true if Vagrant::VERSION =~ /^1.8/
+	        vbox.linked_clone = true if Vagrant::VERSION =~ /^1.8/
           vbox.customize ["modifyvm", :id, "--memory", 2048]
           vbox.customize ["modifyvm", :id, "--cpus", 1]
           if prefix == "controller"
