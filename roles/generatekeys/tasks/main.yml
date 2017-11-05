@@ -1,0 +1,56 @@
+- name: Remove existing ssh keys
+  file:
+    path: "{{  item }}"
+    state: absent
+  delegate_to: localhost
+  run_once: yes
+  with_items:
+  - /vagrant/id_rsa
+  - /vagrant/id_rsa.pub
+
+- name: Generate ssh key
+  shell: 'ssh-keygen -t rsa -N "" -f /vagrant/id_rsa'
+  delegate_to: localhost
+  run_once: yes
+
+- name: Create .ssh directory structures
+  file:
+    path: "/home/vagrant/.ssh"
+    state: directory
+    recurse: yes
+    owner: vagrant
+    group: vagrant
+    mode: 0700
+  run_once: yes
+  delegate_to: localhost
+
+- name: Copy of ssh config
+  copy:
+    src: ./ssh_config.txt
+    dest: /home/vagrant/.ssh/config
+    owner: vagrant
+    group: vagrant
+    mode: 0600
+  run_once: yes
+  delegate_to: localhost
+
+- name: Add key to authorized keys
+  authorized_key:
+    key: "{{ lookup('file', '/vagrant/id_rsa.pub') }}"
+    user: "vagrant"
+    manage_dir: yes
+    validate_certs: no
+
+- name: Copy private key to vagrant user folder on controller* nodes
+  copy:
+    src: "/vagrant/id_rsa"
+    dest: "/home/vagrant/.ssh/"
+    group: vagrant
+    owner: vagrant
+    mode: 0400
+  run_once: yes
+  delegate_to: localhost
+
+- name: Check if hosts can be managed by Ansible
+  ping:
+  changed_when: false
