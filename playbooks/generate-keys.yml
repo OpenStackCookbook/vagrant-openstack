@@ -1,0 +1,7 @@
+---
+- name: Generate SSH keys used under deployment process
+  hosts: all
+  gather_facts: no
+
+  roles:
+    - generatekeys
