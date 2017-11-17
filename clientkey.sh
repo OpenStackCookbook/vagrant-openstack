@@ -1,15 +1,9 @@
 #!/bin/bash
 
+ssh-keyscan compute-01 >> ~/.ssh/known_hosts
 mkdir -p --mode=0700 /root/.ssh
-
 cat /vagrant/id_rsa.pub | sudo tee -a /root/.ssh/authorized_keys
-chmod 0600 /root/.ssh/authorized_keys
-
-cat /vagrant/id_rsa.pub | sudo tee -a /home/vagrant/.ssh/authorized_keys
-chmod 0600 /home/vagrant/.ssh/authorized_keys
-
 cp /vagrant/id_rsa* ~/.ssh/
-chmod 0600 /home/vagrant/.ssh/id_rsa*
 
 # Write out /root/.ssh/config
 echo "

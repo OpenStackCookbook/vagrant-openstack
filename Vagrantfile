@@ -98,15 +98,11 @@ Vagrant.configure("2") do |config|
 
 	# Order is important - this is the last "prefix" (vm) to load up, so execute last
         if hostname == "controller-01"
-
-          box.vm.provision :shell, :path => "install-ansible.sh"
-
-          box.vm.provision :ansible_local do |ansible|
-            ansible.install = false
+          box.vm.provision :ansible do |ansible|
             # Disable default limit to connect to all the machines
             ansible.limit = "all"
             ansible.playbook = "install-openstack.yml"
-            ansible.extra_vars = { ansible_user: 'vagrant' }
+            ansible.extra_vars = { ansible_ssh_user: 'vagrant' }
             ansible.sudo = true
           end
         end 
