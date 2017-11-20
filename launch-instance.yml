@@ -1,0 +1,16 @@
+- name: Launch instance on OpenStack
+  hosts: localhost
+  gather_facts: false
+  tasks:
+  - name: Deploy an instance
+    os_server:
+       state: present
+       name: cookbook1
+       image: xenial-image
+       key_name: demokey
+       timeout: 200
+       flavor: m1.tiny
+       network: private-net
+       meta:
+         hostname: cookbook1
+       verify: false

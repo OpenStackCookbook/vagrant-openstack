@@ -14,7 +14,8 @@
 
 nodes = {
     'compute'  => [1, 13],
-    'controller' => [1, 10]
+    'controller' => [1, 10],
+    'openstack-client' => [1,99]
 }
 
 Vagrant.configure("2") do |config|
@@ -107,10 +108,15 @@ Vagrant.configure("2") do |config|
           end
         end 
 
+	if hostname == "openstack-client"
+	  box.vm.provision :shell, :path => "openstack-client.sh"
+	end
+
+
         # If using Fusion
         box.vm.provider "vmware_fusion" do |v|
 	  v.linked_clone = true if Vagrant::VERSION =~ /^1.8/
-          v.vmx["memsize"] = 3172
+          v.vmx["memsize"] = 1024
           if prefix == "controller"
             v.vmx["memsize"] = 6144
             v.vmx["numvcpus"] = "2"
@@ -125,7 +131,7 @@ Vagrant.configure("2") do |config|
         # If using Workstation
         box.vm.provider "vmware_workstation" do |v|
 	  v.linked_clone = true if Vagrant::VERSION =~ /^1.8/
-          v.vmx["memsize"] = 2048
+          v.vmx["memsize"] = 1024
           if prefix == "controller"
             v.vmx["memsize"] = 6144
             v.vmx["numvcpus"] = "2"
@@ -141,7 +147,7 @@ Vagrant.configure("2") do |config|
         box.vm.provider :virtualbox do |vbox|
           # Defaults
 	  vbox.linked_clone = true if Vagrant::VERSION =~ /^1.8/
-          vbox.customize ["modifyvm", :id, "--memory", 2048]
+          vbox.customize ["modifyvm", :id, "--memory", 1024]
           vbox.customize ["modifyvm", :id, "--cpus", 1]
           if prefix == "controller"
             vbox.customize ["modifyvm", :id, "--memory", 6144]
