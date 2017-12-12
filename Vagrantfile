@@ -12,6 +12,17 @@
 # eth3 - host / API 192.168.100.0/24
 # eth4 - br-vxlan (Neutron VXLAN Tunnel network) 172.29.240.0/24
 
+require 'fileutils'
+
+# Some cleanup of files'
+Dir.glob('*.log').each do |f|
+  FileUtils.rm f unless File.directory? f
+end
+
+Dir.glob('*.retry').each do |f|
+  FileUtils.rm f unless File.directory? f
+end
+
 nodes = {
     'compute'  => [1, 13],
     'controller' => [1, 10],
@@ -145,6 +156,7 @@ Vagrant.configure("2") do |config|
 
         # Otherwise using VirtualBox
         box.vm.provider :virtualbox do |vbox|
+          vbox.name = "#{hostname}"
           # Defaults
 	  vbox.linked_clone = true if Vagrant::VERSION =~ /^1.8/
           vbox.customize ["modifyvm", :id, "--memory", 1024]

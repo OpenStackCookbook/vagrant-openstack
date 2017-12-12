@@ -3,6 +3,7 @@ Vagrant environment that uses [OpenStack Ansible](https://github.com/openstack/o
 Contributors:
 - Kevin Jackson (@itarchitectkev)
 - Cody Bunch (@bunchc)
+- James Denton (@jimmdenton)
 
 Additional Contributors:
 - Wojciech Sciesinski (@ITpraktyk)
@@ -41,10 +42,11 @@ cat openrc
 ```
 
 # Environment
-Deploys 2 machines:
+Deploys 3 machines:
 
 controller-01 (2vCPU, 6Gb Ram)<br>
 compute-01 (1vCPU, 4Gb Ram)<br>
+openstack-client (1vCPU, 1Gb Ram)<br>
 
 # Networking
 eth0 - nat (used by VMware/VirtualBox)<br>
@@ -65,13 +67,17 @@ box.vm.network :private_network, ip: "172.29.240.#{ip_start+i}", :netmask => "25
 
 # Demo Script
 Check out the lab_environment_setup.sh file.<br>
-Modify openrc file (grab from the utility container as described above) and place in the same directory from where you're running the script.<br>
+Use the 'openstack-client' vm:<br>
+```
+vagrant ssh openstack-client
+```
+Modify the 'openrc' file (NOTE: you will need to grab this from the utility container as described above) and place in the vagrant directory (where you executed 'vagrant up') as all guests have access to this.
 <br>
 It assumes you have downloaded Cirros and Ubuntu Xenial. It will load them up, create a couple of networks, router, flavor, security group and keys.<br>
 It will also edit a heat template environment file based on the created networks.<br>
 Once run, execute:<br>
 ```
-. openrc
-./lab_environment_setup.sh
+. /vagrant/openrc        # Source the credentials
+/vagrant/lab_environment_setup.sh
 openstack stack create -t cookbook.yaml -e cookbook-env.yaml myStack
 ```
