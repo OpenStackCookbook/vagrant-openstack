@@ -6,3 +6,4 @@ vagrant.out
 *.retry
 *.bak
 *.log
+openrc

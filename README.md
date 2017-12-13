@@ -7,6 +7,7 @@ Contributors:
 
 Additional Contributors:
 - Wojciech Sciesinski (@ITpraktyk)
+- Geoff Higginbottom (@the_cloudguru)
 
 # View the demo!
 [![Vagrant Up Demo](https://asciinema.org/a/sPAcxfGUSAYsDJy9LTXGZoLR1.png)](https://asciinema.org/a/sPAcxfGUSAYsDJy9LTXGZoLR1)
@@ -40,6 +41,17 @@ sudo -i
 lxc-attach -n $(lxc-ls -f | awk '/utility/ {print $1}')
 cat openrc
 ```
+
+# Troubleshooting
+The OpenStack-Ansible playbooks output to the following files:
+- setup-hosts.log
+- setup-infrastructure.log
+- setup-openstack.log
+In a seperate terminal execute the following exactly as stated; ignoring the warning about the files not existing (yet):
+```
+tail -F setup-hosts.log setup-infrastructure.log setup-openstack.log
+```
+This will produce the Ansible output that would otherwise be hidden by Vagrant
 
 # Environment
 Deploys 3 machines:

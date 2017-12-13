@@ -2,8 +2,9 @@
 # vi: set ft=ruby :
 
 # Nodes: 
-#        controller-01 	192.168.100.10
-#        compute-01 	192.168.100.13
+#        controller-01 	  192.168.100.10
+#        compute-01 	  192.168.100.13
+#	 openstack-client 192.168.100.99
 
 # Interfaces
 # eth0 - nat (used by VMware/VirtualBox)
@@ -43,16 +44,22 @@ Vagrant.configure("2") do |config|
   config.vm.box = "velocity42/xenial64"
   config.vm.synced_folder ".", "/vagrant", type: "nfs"
 
-  config.vm.provider :vmware_workstation do |vmware, override|
+  if config.vm.provider :vmware_workstation
     # If we're running Workstation (i.e. Linux)
     if Vagrant.has_plugin?("vagrant-triggers")
-      override.trigger.before :up do
+      config.trigger.before :up do
         puts "[+] INFO: Ensuring /dev/vmnet* are correct to allow promiscuous mode."
         puts "[+]       Needed for access to containers on different VMs."
         run "./fix_vmnet.sh"
       end
     else
-      puts "[-] WARN: Please ensure /dev/vmnet* is group owned and writeable by you" 
+      puts "[-] You do not have vagrant-triggers installed so Vagrant is unable"
+      puts "[-] to set the correct permissions for promiscuous mode to function"
+      puts "[-] on VMware Workstation based environments"
+      puts "[-]"
+      puts "[-] Install using: vagrant plugin install vagrant-triggers"
+      puts "[-]"
+      puts "[-] Please ensure /dev/vmnet* is group owned and writeable by you" 
       puts "[-]          sudo chmod chgrp <gid> /dev/vmnet*"
       puts "[-]          sudo chmod g+rw /dev/vmnet*"
     end
