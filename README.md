@@ -51,6 +51,7 @@ The OpenStack-Ansible playbooks output to the following files:
 - setup-hosts.log
 - setup-infrastructure.log
 - setup-openstack.log
+<br>
 In a seperate terminal execute the following exactly as stated; ignoring the warning about the files not existing (yet):
 ```
 tail -F setup-hosts.log setup-infrastructure.log setup-openstack.log
