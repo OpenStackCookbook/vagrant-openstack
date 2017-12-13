@@ -7,3 +7,4 @@ vagrant.out
 *.bak
 *.log
 *.img
+openrc
