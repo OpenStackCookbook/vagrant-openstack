@@ -36,6 +36,10 @@ Horizon interface will be @ https://192.168.100.10/
 Details of access can be found in the controller-01 utility container:
 
 ```
+./get_openrc.sh
+```
+Or manually
+```
 vagrant ssh controller-01
 sudo -i
 lxc-attach -n $(lxc-ls -f | awk '/utility/ {print $1}')
@@ -78,17 +82,21 @@ box.vm.network :private_network, ip: "172.29.240.#{ip_start+i}", :netmask => "25
 ```
 
 # Demo Script
-Check out the lab_environment_setup.sh file.<br>
-Use the 'openstack-client' vm:<br>
+Review the script lab_environment_setup.sh file and edit to suit. It's a basic shell script that will:
+- Upload a Cirros or Xenial Image if they exist in your current working directory (/vagrant as seen by guests)
+- Create a couple of networks: private network; public network on 192.168.100.0/24 (eth3 from above)
+- Upload your vagrant ssh key
+- Modify the example cookbook Heat template to match the example resources loaded
+
+To use this, you need to access the 'openstack-client' vm. First grab the openrc OpenStack credentials:<br>
+```
+./get_openrc.sh
+```
+Now access the openstack-client VM:
 ```
 vagrant ssh openstack-client
 ```
-Modify the 'openrc' file (NOTE: you will need to grab this from the utility container as described above) and place in the vagrant directory (where you executed 'vagrant up') as all guests have access to this.
-<br>
-It assumes you have downloaded Cirros and Ubuntu Xenial. It will load them up, create a couple of networks, router, flavor, security group and keys.<br>
-It will also edit a heat template environment file based on the created networks.<br>
-Once run, execute:<br>
-```
+Now run the following commands:
 . /vagrant/openrc        # Source the credentials
 /vagrant/lab_environment_setup.sh
 openstack stack create -t cookbook.yaml -e cookbook-env.yaml myStack
