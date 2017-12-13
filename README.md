@@ -97,6 +97,7 @@ Now access the openstack-client VM:
 vagrant ssh openstack-client
 ```
 Now run the following commands:
+```
 . /vagrant/openrc        # Source the credentials
 /vagrant/lab_environment_setup.sh
 openstack stack create -t cookbook.yaml -e cookbook-env.yaml myStack
