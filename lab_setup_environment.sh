@@ -1,11 +1,20 @@
 #!/bin/bash
+set -x
+
+RUNDIR="."
+
+# Determine if we're running from the openstack-client vm
+if [[ $(hostname -s) == "openstack-client" ]]
+then
+	RUNDIR="/vagrant"
+fi
 
 # Source credentials
-. openrc
+. ${RUNDIR}/openrc
 
 # Load some images
-CIRROS=/vagrant/cirros-0.3.5-x86_64-disk.img
-UBUNTU=/vagrant/xenial-server-cloudimg-amd64-disk1.img
+CIRROS=/${RUNDIR}/cirros-0.3.5-x86_64-disk.img
+UBUNTU=/${RUNDIR}/xenial-server-cloudimg-amd64-disk1.img
 
 if [ -f ${CIRROS} ]
 then
@@ -54,6 +63,6 @@ PUB_NET=$(openstack network list | awk '/GATEWAY_NET/ {print $2}')
 PRIV_NET=$(openstack network list | awk '/private/ {print $2}')
 PRIV_SUBNET=$(openstack subnet list | awk '/private/ {print $2}')
 
-sed -i "s/public_net_id.*/public_net_id: ${PUB_NET}/" cookbook-env.yaml 
-sed -i "s/private_net_id.*/private_net_id: ${PRIV_NET}/" cookbook-env.yaml 
-sed -i "s/private_subnet_id.*/private_subnet_id: ${PRIV_SUBNET}/" cookbook-env.yaml 
+sed -i "s/public_net_id.*/public_net_id: ${PUB_NET}/" ${RUNDIR}/cookbook-env.yaml 
+sed -i "s/private_net_id.*/private_net_id: ${PRIV_NET}/" ${RUNDIR}/cookbook-env.yaml 
+sed -i "s/private_subnet_id.*/private_subnet_id: ${PRIV_SUBNET}/" ${RUNDIR}/cookbook-env.yaml 
