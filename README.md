@@ -105,7 +105,7 @@ Now run the following commands:
 ```
 . /vagrant/openrc        # Source the credentials
 /vagrant/lab_environment_setup.sh
-openstack stack create -t cookbook.yaml -e cookbook-env.yaml myStack
+openstack stack create -t /vagrant/cookbook.yaml -e /vagrant/cookbook-env.yaml myStack
 ```
 # Resuming a suspended lab
 The containers start in a random order following a VM resume, so this dirty hack will reboot the API service containers for you so you can get back to working in your lab again:
