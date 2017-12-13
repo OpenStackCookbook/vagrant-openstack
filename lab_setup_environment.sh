@@ -11,20 +11,6 @@ fi
 # Source credentials
 . ${RUNDIR}/openrc
 
-# Load some images
-CIRROS=/${RUNDIR}/cirros-0.3.5-x86_64-disk.img
-UBUNTU=/${RUNDIR}/xenial-server-cloudimg-amd64-disk1.img
-
-if [ -f ${CIRROS} ]
-then
-	openstack image create --container-format bare --disk-format qcow2 --public --file ${CIRROS} cirros-image
-fi
-
-if [ -f ${UBUNTU} ]
-then
-	openstack image create --container-format bare --disk-format qcow2 --public --file ${UBUNTU} xenial-image
-fi
-
 # Create a flavor
 openstack flavor create --ram 512 --disk 0 --vcpus 1 --public m1.tiny
 

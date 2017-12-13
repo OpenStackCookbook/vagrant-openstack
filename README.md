@@ -93,6 +93,10 @@ To use this, you need to access the 'openstack-client' vm. First grab the openrc
 ```
 ./get_openrc.sh
 ```
+Now load some images into OpenStack using the following script:
+```
+./load_images.sh
+```
 Now access the openstack-client VM:
 ```
 vagrant ssh openstack-client
