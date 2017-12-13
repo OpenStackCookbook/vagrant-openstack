@@ -106,6 +106,7 @@ openstack stack create -t cookbook.yaml -e cookbook-env.yaml myStack
 # Resuming a suspended lab
 The containers start in a random order following a VM resume, so this dirty hack will reboot the API service containers for you so you can get back to working in your lab again:
 ```
+vagrant reload
 ./resume_environment.sh
 ```
 
