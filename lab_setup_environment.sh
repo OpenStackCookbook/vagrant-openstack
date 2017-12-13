@@ -41,7 +41,7 @@ openstack security group rule create --remote-ip 0.0.0.0/0 --dst-port 22:22 --pr
 openstack security group rule create --remote-ip 0.0.0.0/0 --protocol icmp --ingress --project admin ${DEFAULT_SEC_GROUP}
 
 # Add the key (created on vagrant up) as a key to also be used to access guests
-openstack keypair create --public-key ~/.ssh/id_rsa.pub demokey
+openstack keypair create --public-key /vagrant/id_rsa.pub demokey
 
 # Lazy stuff to do with the example heat template: update the environment file with the created network UUIDs
 PUB_NET=$(openstack network list | awk '/GATEWAY_NET/ {print $2}')
