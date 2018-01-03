@@ -103,18 +103,19 @@ compute_hosts:
   compute-01:
     ip: 172.29.236.13
 #  compute-02:
-#    ip: 172.29.236.203
+#    ip: 172.29.236.14
 
 #storage_hosts:
-#  logging:
-#    ip: 172.29.236.201
+#  cinder-host:
+#    ip: 172.29.236.100
 #    container_vars:
 #      cinder_backends:
 #        limit_container_types: cinder_volume
 #        lvm:
 #          volume_group: cinder-volumes
-#          volume_driver: cinder.volume.drivers.lvm.LVMISCSIDriver
+#          volume_driver: cinder.volume.drivers.lvm.LVMVolumeDriver
 #          volume_backend_name: LVM_iSCSI
+#          iscsi_ip_address: "172.29.236.100"
 
 log_hosts:
   controller-01:

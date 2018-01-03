@@ -13,17 +13,6 @@
 # eth3 - host / API 192.168.100.0/24
 # eth4 - br-vxlan (Neutron VXLAN Tunnel network) 172.29.240.0/24
 
-require 'fileutils'
-
-# Some cleanup of files'
-Dir.glob('*.log').each do |f|
-  FileUtils.rm f unless File.directory? f
-end
-
-Dir.glob('*.retry').each do |f|
-  FileUtils.rm f unless File.directory? f
-end
-
 nodes = {
     'compute'  => [1, 13],
     'controller' => [1, 10],
@@ -37,6 +26,13 @@ Vagrant.configure("2") do |config|
     config.hostmanager.manage_guest = true
   else
     raise "[-] ERROR: Please add vagrant-hostmanager plugin:  vagrant plugin install vagrant-hostmanager"
+  end
+
+  # clean up files on the host after the guest is destroyed
+  config.trigger.after :destroy do
+    run "rm -f setup-hosts.log"
+    run "rm -f setup-infrastructure.log"
+    run "rm -f setup-openstack.log"
   end
      
     
@@ -124,6 +120,8 @@ Vagrant.configure("2") do |config|
             ansible.extra_vars = { ansible_ssh_user: 'vagrant' }
             ansible.sudo = true
           end
+
+          box.vm.provision :shell, :path => "fetch-openrc-from-utility.sh"
         end 
 
 	if hostname == "openstack-client"
@@ -136,7 +134,7 @@ Vagrant.configure("2") do |config|
 	  v.linked_clone = true if Vagrant::VERSION =~ /^1.8/
           v.vmx["memsize"] = 1024
           if prefix == "controller"
-            v.vmx["memsize"] = 6144
+            v.vmx["memsize"] = 7168
             v.vmx["numvcpus"] = "2"
           end
           if prefix == "compute"
@@ -151,7 +149,7 @@ Vagrant.configure("2") do |config|
 	  v.linked_clone = true if Vagrant::VERSION =~ /^1.8/
           v.vmx["memsize"] = 1024
           if prefix == "controller"
-            v.vmx["memsize"] = 6144
+            v.vmx["memsize"] = 7168
             v.vmx["numvcpus"] = "2"
           end
           if prefix == "compute"
@@ -169,7 +167,7 @@ Vagrant.configure("2") do |config|
           vbox.customize ["modifyvm", :id, "--memory", 1024]
           vbox.customize ["modifyvm", :id, "--cpus", 1]
           if prefix == "controller"
-            vbox.customize ["modifyvm", :id, "--memory", 6144]
+            vbox.customize ["modifyvm", :id, "--memory", 7168]
             vbox.customize ["modifyvm", :id, "--cpus", 2]
           end
           if prefix == "compute"

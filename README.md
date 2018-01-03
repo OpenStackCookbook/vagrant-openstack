@@ -89,10 +89,7 @@ Review the script lab_environment_setup.sh file and edit to suit. It's a basic s
 - Upload your vagrant ssh key
 - Modify the example cookbook Heat template to match the example resources loaded
 
-To use this, you need to access the 'openstack-client' vm. First grab the openrc OpenStack credentials:<br>
-```
-./get_openrc.sh
-```
+The openrc OpenStack credentials have been put into a file called /vagrant/openrc (which is 'openrc' from the directory you launched vagrant up):<br>
 Now load some images into OpenStack using the following script:
 ```
 ./load_images.sh

@@ -5,12 +5,12 @@
   - name: Deploy an instance
     os_server:
        state: present
-       name: cookbook1
+       name: cookbook.test
        image: xenial-image
        key_name: demokey
        timeout: 200
        flavor: m1.tiny
        network: private-net
        meta:
-         hostname: cookbook1
+         hostname: cookbook.test
        verify: false
