@@ -1,0 +1,193 @@
+- name: Create OpenStack Cloud Environment
+  hosts: localhost
+  gather_facts: false
+
+  vars:
+    webserver_count: 2
+  tasks:
+    - name: Download Ubuntu 16.04 Xenial
+      get_url:
+        url: http://releases.ubuntu.com/16.04/ubuntu-16.04.3-server-amd64.img
+        dest: /tmp/ubuntu-16.04.img
+    - name: Ensure Ubuntu 16.04 Xenial Image Exists
+      os_image:
+        name: xenial-image
+        container_format: bare
+        disk_format: qcow2
+        state: present
+        filename: /tmp/ubuntu-16.04.img
+        verify: false
+
+- name: Create the cookbook network
+  os_network:
+    state: present
+    name: cookbook_network
+    external: false
+    shared: false
+    verify: false
+  register: cookbook_network
+
+- name: Create the test subnet
+  os_subnet:
+    state: present
+    network_name: "{{ cookbook_network.id }}"
+    name: cookbook_subnet
+    ip_version: 4
+    cidr: 192.168.0.0/24
+    gateway_ip: 192.168.0.1
+    enable_dhcp: yes
+    dns_nameservers:
+      - 192.168.1.20
+    verify: false
+  register: cookbook_subnet
+
+- name: Create the test router
+  os_router:
+    state: present
+    name: cookbook_router
+    network: GATEWAY_NET
+    external_fixed_ips:
+      - subnet: GATEWAY_SUBNET
+    interfaces:
+      - cookbook_subnet
+    verify: false
+
+- name: Launch instance on OpenStack
+  hosts: localhost
+  gather_facts: false
+
+- name: Insert routes into router
+  command: openstack router set --route destination=192.168.1.0/24,gateway=192.168.100.1 cookbook_router
+  register: cookbook_router_route
+
+- name: Create ansible security group
+  os_security_group:
+    state: present
+    name: ansible
+    verify: false
+
+- name: Create rule to allow SSH connections
+  os_security_group_rule:
+    security_group: ansible
+    protocol: tcp
+    port_range_min: 22
+    port_range_max: 22
+    remote_ip_prefix: 0.0.0.0/0
+    verify: false
+
+- name: Create webserver security group
+  os_security_group:
+    state: present
+    name: webserver
+    verify: false
+
+- name: Create rule to allow http connections
+  os_security_group_rule:
+    security_group: webserver
+    protocol: tcp
+    port_range_min: 80
+    port_range_max: 80
+    remote_ip_prefix: 0.0.0.0/0
+    verify: false
+
+- name: Deploy Webserver Instances
+  os_server:
+    state: present
+    name: webserver{{ item }}
+    image: xenial-image
+    key_name: demokey
+    timeout: 200
+    flavor: m1.tiny
+    network: cookbook_network
+    security_groups: default,ansible,webserver
+    verify: false
+  register: nova_webservers
+
+  with_sequence:
+    count={{ webserver_count }}
+
+- name: Add webservers to Inventory
+  add_host: name="{{ item.server.name }}" groups=webservers 
+         ansible_ssh_host="{{ item.server.accessIPv4 }}"
+  with_items: "{{ nova_webservers.results }}"
+
+- name: Deploy HAProxy Instance
+  os_server:
+    state: present
+    name: haproxy
+    image: xenial-image
+    key_name: demokey
+    timeout: 200
+    flavor: m1.tiny
+    network: cookbook_network
+    security_groups: default,ansible,webserver
+    verify: false
+  register: nova_haproxy
+  with_sequence:
+    count=1
+
+- name: Add HAProxy to Inventory
+  add_host: name="{{ item.server.name }}" groups=haproxy 
+         ansible_ssh_host="{{ item.server.accessIPv4 }}"
+  with_items: "{{ nova_haproxy.results }}"
+
+- name: Wait for port 22 to be ready
+  hosts: webservers:haproxy
+  gather_facts: False
+  tasks:
+    - local_action: wait_for port=22 host="{{ ansible_ssh_host }}" search_regex=OpenSSH delay=10
+
+- name: Configure Web Servers
+  hosts: webservers
+  remote_user: ubuntu
+  become: yes
+  gather_facts: False
+
+pre_tasks:
+    - name: Set APT proxy
+      raw: echo "Acquire::http::Proxy \"http://192.168.1.20:3128\";" > /etc/apt/apt.conf
+    - name: 'install python2'
+      raw: sudo apt-get -y install python-simplejson
+
+tasks:
+    - name: Ensure Apache is installed
+      apt: name=apache2 state=latest
+    - name: Ensure that Apache is started
+      service: name=apache2 state=started
+
+- name: Gathering facts about webservers
+     hosts: webservers
+     remote_user: ubuntu
+     become: yes
+     tasks:
+       - name: Gathering facts
+         setup:
+
+- name: Configure HAProxy
+         hosts: haproxy
+         remote_user: ubuntu
+         become: yes
+         gather_facts: False
+         pre_tasks:
+           - name: Set APT proxy
+             raw: echo "Acquire::http::Proxy \"http://192.168.1.20:3128\";" > /etc/apt/apt.conf
+           - name: 'install python2'
+             raw: sudo apt-get -y install python-simplejson
+
+         tasks:
+           - name: Update apt cache
+             apt: update_cache=yes cache_valid_time=3600
+           - name: Install haproxy
+             apt: name=haproxy state=present
+           - name: Enable init script
+             replace: dest='/etc/default/haproxy'
+                   regexp='ENABLED=0'
+                   replace='ENABLED=1'
+           - name: Update HAProxy config
+             template: src=templates/haproxy.cfg.j2
+                   dest=/etc/haproxy/haproxy.cfg
+             notify:
+               - restart haproxy
+         handlers:
+           - name: restart haproxy
+             service: name=haproxy state=restarted

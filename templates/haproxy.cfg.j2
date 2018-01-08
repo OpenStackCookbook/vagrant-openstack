@@ -1,0 +1,30 @@
+global
+       log 127.0.0.1 local0 notice
+       maxconn 2000
+       user haproxy
+       group haproxy
+       daemon
+   defaults
+       log  global
+       mode  http
+       option  httplog
+       option  dontlognull
+       retries 3
+       option redispatch
+       timeout connect  5000
+       timeout client  10000
+       timeout server  10000
+   listen {{haproxy_app_name}}
+       bind *:80
+       mode {{haproxy_mode}}
+       stats {{haproxy_enable_stats}}
+       {% if haproxy_enable_stats == 'enable' %}
+       stats uri /haproxy?stats
+       stats realm Strictly\ Private
+      {% endif %}
+       balance {{haproxy_algorithm}}
+       option httpclose
+       option forwardfor
+       {% for host in groups['webservers'] %}
+       server {{ hostvars[host].inventory_hostname }} {{ hostvars[host]['ansible_all_ipv4_addresses'][0] }} check
+       {% endfor %}
