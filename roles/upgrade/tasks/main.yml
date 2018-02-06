@@ -2,7 +2,27 @@
 - name: Configure apt and upgrade packages
   include_vars: config.yml
 
-- include: apt-conf-d.yml
-- include: apt-proxy-config.yml
-- include: update-apt-cache.yml
-- include: upgrade-packages.yml
+- name: Ensure apt.conf.d exists
+  file: 
+    path: /etc/apt/apt.conf.d 
+    state: directory
+    mode: 0755
+
+- name: Apt Proxy Config
+  template:
+    src: 01proxy.j2
+    dest: /etc/apt/apt.conf.d/01proxy.conf
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Update Apt Cache
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: Upgrade Ubuntu Packages
+  apt:
+    upgrade: safe
+    force: yes
+    cache_valid_time: 3600
