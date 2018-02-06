@@ -30,3 +30,6 @@
        - libssl-dev
        - python-crypto
        - python-yaml
+       - python-pip
+       - lxc1
+       - libvirt-bin
