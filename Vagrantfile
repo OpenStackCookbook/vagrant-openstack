@@ -29,6 +29,12 @@ Vagrant.configure("2") do |config|
     raise "[-] ERROR: Please add vagrant-hostmanager plugin:  vagrant plugin install vagrant-hostmanager"
   end
 
+  # clean up files on the host after the guest is destroyed
+  config.trigger.after :destroy do
+    run "rm -f logs/*.log >/dev/null 2>&1"
+    run "rm -f id_rsa* >/dev/null 2>&1"
+  end
+
   # Defaults (VirtualBox)
   config.vm.box = "velocity42/xenial64"
   config.vm.synced_folder ".", "/vagrant", type: "nfs"
