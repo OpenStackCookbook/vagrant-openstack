@@ -2,34 +2,37 @@
 - name: Update Apt Cache
   apt:
     update_cache: yes
+    cache_valid_time: 3600
 
 - name: Install Pre-Req Packages
   apt:
     name: "{{ item }}"
     state: installed
+    cache_valid_time: 3600
     install_recommends: yes
     force: yes
   with_items:
-       - bridge-utils 
-       - debootstrap 
-       - ifenslave 
-       - ifenslave-2.6 
-       - lsof 
-       - lvm2 
-       - tcpdump 
-       - vlan 
-       - aptitude 
-       - build-essential 
-       - git 
-       - ntp 
-       - ntpdate 
-       - python-dev 
-       - libyaml-dev 
-       - libpython2.7-dev 
-       - libffi-dev 
-       - libssl-dev
-       - python-crypto
-       - python-yaml
-       - python-pip
-       - lxc1
-       - libvirt-bin
+    - bridge-utils
+    - debootstrap
+    - ifenslave
+    - ifenslave-2.6
+    - lsof
+    - lvm2
+    - tcpdump
+    - vlan
+    - aptitude
+    - build-essential
+    - git
+    - ntp
+    - ntpdate
+    - python-dev
+    - libyaml-dev
+    - libpython2.7-dev
+    - libffi-dev
+    - libssl-dev
+    - python-crypto
+    - python-yaml
+    - python-pip
+    - lxc1
+    - libvirt-bin
+
