@@ -1,43 +1,46 @@
 ---
 - block:
     - name: Run Setup Hosts Playbook
-      shell: openstack-ansible setup-hosts.yml > /vagrant/setup-hosts.log
+      shell: openstack-ansible --forks 2 setup-hosts.yml > /vagrant/logs/setup-hosts.log
       args:
         chdir: /opt/openstack-ansible/playbooks
-        creates: /vagrant/setup-hosts.log
+        creates: /vagrant/logs/setup-hosts.log
 
   rescue:
     - name: Running openstack-ansible setup-hosts.yml
-      shell: openstack-ansible setup-hosts.yml > /vagrant/setup-hosts.log
+      shell: openstack-ansible --forks 1 setup-hosts.yml -v > /vagrant/logs/setup-hosts-fallback.log
       args:
         chdir: /opt/openstack-ansible/playbooks
+        creates: /vagrant/logs/setup-hosts-fallback.log
 
 - block:
     - name: Run Infrastructure Playbooks
-      shell: openstack-ansible --forks 2  setup-infrastructure.yml > /vagrant/setup-infrastructure.log
+      shell: openstack-ansible --forks 2 setup-infrastructure.yml > /vagrant/logs/setup-infrastructure.log
       args:
         chdir: /opt/openstack-ansible/playbooks
-        creates: /vagrant/setup-infrastructure.log
+        creates: /vagrant/logs/setup-infrastructure.log
 
   rescue:
     - name: Running openstack-ansible setup-infrastructure.yml
-      shell: openstack-ansible --forks 1 setup-infrastructure.yml > /vagrant/setup-infrastructure.log
+      shell: openstack-ansible --forks 1 setup-infrastructure.yml -v > /vagrant/logs/setup-infrastructure-fallback.log
       args:
         chdir: /opt/openstack-ansible/playbooks
+        creates: /vagrant/logs/setup-infrastructure-fallback.log
 
 - name: Configure Galera for HA Proxy
   shell: /vagrant/galera_haproxy.sh
 
 - block:
     - name: Run OpenStack Playbooks
-      shell: openstack-ansible --forks 2  setup-openstack.yml > /vagrant/setup-openstack.log
+      shell: openstack-ansible --forks 2 setup-openstack.yml > /vagrant/logs/setup-openstack.log
       args:
         chdir: /opt/openstack-ansible/playbooks
-        creates: /vagrant/setup-openstack.log
+        creates: /vagrant/logs/setup-openstack.log
 
   rescue:
     - name: Running openstack-ansible setup-openstack.yml
-      shell: openstack-ansible --forks 1 setup-openstack.yml > /vagrant/setup-openstack.log
+      shell: openstack-ansible --forks 1 setup-openstack.yml -v > /vagrant/logs/setup-openstack-fallback.log
       args:
         chdir: /opt/openstack-ansible/playbooks
+        creates: /vagrant/logs/setup-openstack-fallback.log
 

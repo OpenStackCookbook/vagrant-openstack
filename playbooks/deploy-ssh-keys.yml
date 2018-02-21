@@ -1,0 +1,106 @@
+---
+- name: Generate SSH keys used under deployment process
+  hosts: openstack-client
+  gather_facts: no
+  become: yes
+
+  tasks:
+    - name: Remove existing ssh keys
+      file:
+        path: "{{ item }}"
+        state: absent
+      with_items:
+      - /vagrant/id_rsa
+      - /vagrant/id_rsa.pub
+      become: no
+      run_once: yes
+      delegate_to: localhost
+
+    - name: Generate ssh key
+      shell: 'ssh-keygen -t rsa -N "" -f /vagrant/id_rsa'
+      become: no
+      run_once: yes
+      delegate_to: localhost
+
+    - name: Create .ssh directory structures
+      file:
+        path: "{{ item.directory }}/.ssh"
+        state: directory
+        recurse: yes
+        owner: "{{ item.user }}"
+        group: "{{ item.user }}"
+        mode: 0700
+      with_items:
+      - { directory: '/home/vagrant', user: 'vagrant' }
+      - { directory: '/root', user: 'root' }
+      run_once: yes
+      delegate_to: localhost
+
+    - name: Copy of ssh config
+      copy:
+        src: ./files/ssh_config.txt
+        dest: "{{ item.directory }}/.ssh/config"
+        owner: "{{ item.user }}"
+        group: "{{ item.user }}"
+        mode: 0600
+      with_items:
+      - { directory: '/home/vagrant', user: 'vagrant' }
+      - { directory: '/root', user: 'root' }
+      run_once: yes
+      delegate_to: localhost
+
+
+- name: Distribute SSH settings and keys
+  hosts: all
+  gather_facts: no
+  become: yes
+
+  tasks:
+    - name: Add key to authorized keys
+      authorized_key:
+        key: "{{ lookup('file', '/vagrant/id_rsa.pub') }}"
+        user: "{{ item.user }}"
+        manage_dir: yes
+        validate_certs: no
+      with_items:
+      - { directory: '/home/vagrant', user: 'vagrant' }
+      - { directory: '/root', user: 'root' }
+
+    - name: Create .ssh directory structures
+      file:
+        path: "{{ item.directory }}/.ssh"
+        state: directory
+        recurse: yes
+        owner: "{{ item.user }}"
+        group: "{{ item.user }}"
+        mode: 0700
+      with_items:
+      - { directory: '/home/vagrant', user: 'vagrant' }
+      - { directory: '/root', user: 'root' }
+
+    - name: Copy of ssh config
+      copy:
+        src: ./files/ssh_config.txt
+        dest: "{{ item.directory }}/.ssh/config"
+        owner: "{{ item.user }}"
+        group: "{{ item.user }}"
+        mode: 0600
+      with_items:
+      - { directory: '/home/vagrant', user: 'vagrant' }
+      - { directory: '/root', user: 'root' }
+
+    - name: Copy private key to vagrant user folder on all nodes
+      copy:
+        src: "/vagrant/id_rsa"
+        dest: "{{ item.directory }}/.ssh/"
+        owner: "{{ item.user }}"
+        group: "{{ item.user }}"
+        mode: 0400
+      with_items:
+      - { directory: '/home/vagrant', user: 'vagrant' }
+      - { directory: '/root', user: 'root' }
+
+    - name: Check if hosts can be managed by Ansible
+      ping:
+      changed_when: false
+      become: no

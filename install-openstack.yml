@@ -1,4 +1,22 @@
 ---
+- name: Remove logs from the previous installation
+  hosts: openstack-client
+  user: vagrant
+  become: true
+
+  tasks:
+  - name: Remove older log files
+    file:
+      path: "{{ item }}"
+      state: absent
+    with_items:
+      - "/vagrant/logs/setup-hosts.log"
+      - "/vagrant/logs/setup-hosts-fallback.log"
+      - "/vagrant/logs/setup-infrastructure.log"
+      - "/vagrant/logs/setup-infrastructure-fallback.log"
+      - "/vagrant/logs/setup-openstack.log"
+      - "/vagrant/logs/setup-openstack-fallback.log"
+
 - name: Prep VMs for OpenStack
   hosts: all
   vars_files:
@@ -18,6 +36,9 @@
     - config.yml
   user: vagrant
   become: true
+
+  vars:
+    ansible_verbosity: "-v"
 
   roles:
     - getplaybooks
