@@ -1,6 +1,8 @@
 ---
 - name: Prep VMs for OpenStack
   hosts: all
+  vars_files:
+    - config.yml
   user: vagrant
   become: true
 
@@ -12,6 +14,8 @@
 
 - name: Run OpenStack Installation
   hosts: controller-01
+  vars_files:
+    - config.yml
   user: vagrant
   become: true
 
@@ -27,5 +31,8 @@
   become: true
 
   tasks:
-    - command: "systemctl restart libvirtd"
+    - name: Restart libvirtd at compute nodes
+      service:
+        name: libvirtd
+        state: restarted
 

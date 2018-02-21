@@ -1,5 +1,6 @@
 ---
-- name: Get OpenStack Playbooks
-  include_vars: config.yml
-
-- include: get-playbooks.yml
+- name: Get OpenStack-Ansible
+  git:
+    repo=https://github.com/openstack/openstack-ansible.git
+    dest=/opt/openstack-ansible
+    version="{{rpc_version}}"

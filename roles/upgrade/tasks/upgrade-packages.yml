@@ -1,4 +1,0 @@
-- name: Upgrade Ubuntu Packages
-  apt:
-    upgrade: safe
-    force: yes
