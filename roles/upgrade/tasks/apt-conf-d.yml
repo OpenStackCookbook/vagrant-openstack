@@ -1,2 +1,0 @@
-- name: Ensure apt.conf.d exists
-  file: path=/etc/apt/apt.conf.d state=directory mode=0755
