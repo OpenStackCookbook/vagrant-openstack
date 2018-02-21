@@ -1,5 +1,0 @@
----
-- name: Get OpenStack Playbooks
-  git: repo=https://github.com/openstack/openstack-ansible.git
-       dest=/opt/openstack-ansible
-       version="{{rpc_version}}"
