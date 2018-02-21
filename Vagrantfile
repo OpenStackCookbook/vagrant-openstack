@@ -1,10 +1,10 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-# Nodes: 
-#        controller-01 	  192.168.100.10
-#        compute-01 	  192.168.100.13
-#	 openstack-client 192.168.100.99
+# Nodes:
+#  controller-01    192.168.100.10
+#  compute-01       192.168.100.13
+#  openstack-client 192.168.100.99
 
 # Interfaces
 # eth0 - nat (used by VMware/VirtualBox)
@@ -20,6 +20,7 @@ nodes = {
 }
 
 Vagrant.configure("2") do |config|
+
   if Vagrant.has_plugin?("vagrant-hostmanager")
     config.hostmanager.enabled = true
     config.hostmanager.manage_host = true
@@ -34,8 +35,8 @@ Vagrant.configure("2") do |config|
     run "rm -f setup-infrastructure.log"
     run "rm -f setup-openstack.log"
   end
-     
-    
+
+
   # Defaults (VirtualBox)
   config.vm.box = "velocity42/xenial64"
   config.vm.synced_folder ".", "/vagrant", type: "nfs"
@@ -55,7 +56,7 @@ Vagrant.configure("2") do |config|
       puts "[-]"
       puts "[-] Install using: vagrant plugin install vagrant-triggers"
       puts "[-]"
-      puts "[-] Please ensure /dev/vmnet* is group owned and writeable by you" 
+      puts "[-] Please ensure /dev/vmnet* is group owned and writeable by you"
       puts "[-]          sudo chmod chgrp <gid> /dev/vmnet*"
       puts "[-]          sudo chmod g+rw /dev/vmnet*"
     end
@@ -83,7 +84,9 @@ Vagrant.configure("2") do |config|
   end
 
   #Default is 2200..something, but port 2200 is used by forescout NAC agent.
-  config.vm.usable_port_range= 2800..2900 
+  config.vm.usable_port_range = 2800..2900
+
+  config.vm.graceful_halt_timeout = 120
 
   nodes.each do |prefix, (count, ip_start)|
     count.times do |i|
@@ -98,9 +101,9 @@ Vagrant.configure("2") do |config|
       config.vm.define "#{hostname}" do |box|
         box.vm.hostname = "#{hostname}.cook.book"
         box.vm.network :private_network, ip: "172.29.236.#{ip_start+i}", :netmask => "255.255.255.0"
-        box.vm.network :private_network, ip: "10.10.0.#{ip_start+i}", :netmask => "255.255.255.0" 
-      	box.vm.network :private_network, ip: "192.168.100.#{ip_start+i}", :netmask => "255.255.255.0" 
-      	box.vm.network :private_network, ip: "172.29.240.#{ip_start+i}", :netmask => "255.255.255.0" 
+        box.vm.network :private_network, ip: "10.10.0.#{ip_start+i}", :netmask => "255.255.255.0"
+      	box.vm.network :private_network, ip: "192.168.100.#{ip_start+i}", :netmask => "255.255.255.0"
+      	box.vm.network :private_network, ip: "172.29.240.#{ip_start+i}", :netmask => "255.255.255.0"
 
 	# Create ssh-keypair for Ansible to function
 	if hostname == "compute-01"
@@ -129,9 +132,9 @@ Vagrant.configure("2") do |config|
 	end
 
 
-        # If using Fusion
+        # If using VMware Fusion
         box.vm.provider "vmware_fusion" do |v|
-	  v.linked_clone = true if Vagrant::VERSION =~ /^1.8/
+          v.linked_clone = true if Vagrant::VERSION =~ /^1.8/
           v.vmx["memsize"] = 1024
           if prefix == "controller"
             v.vmx["memsize"] = 7168
@@ -144,9 +147,9 @@ Vagrant.configure("2") do |config|
           end
         end
 
-        # If using Workstation
+        # If using VMware Workstation
         box.vm.provider "vmware_workstation" do |v|
-	  v.linked_clone = true if Vagrant::VERSION =~ /^1.8/
+          v.linked_clone = true if Vagrant::VERSION =~ /^1.8/
           v.vmx["memsize"] = 1024
           if prefix == "controller"
             v.vmx["memsize"] = 7168
@@ -163,7 +166,7 @@ Vagrant.configure("2") do |config|
         box.vm.provider :virtualbox do |vbox|
           vbox.name = "#{hostname}"
           # Defaults
-	  vbox.linked_clone = true if Vagrant::VERSION =~ /^1.8/
+          vbox.linked_clone = true if Vagrant::VERSION =~ /^1.8/
           vbox.customize ["modifyvm", :id, "--memory", 1024]
           vbox.customize ["modifyvm", :id, "--cpus", 1]
           if prefix == "controller"
