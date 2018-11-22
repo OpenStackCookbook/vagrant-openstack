@@ -29,20 +29,12 @@ Vagrant.configure("2") do |config|
     raise "[-] ERROR: Please add vagrant-hostmanager plugin:  vagrant plugin install vagrant-hostmanager"
   end
 
-  # clean up files on the host after the guest is destroyed
-  config.trigger.after :destroy do
-    run "rm -f setup-hosts.log"
-    run "rm -f setup-infrastructure.log"
-    run "rm -f setup-openstack.log"
-  end
-
-
   # Defaults (VirtualBox)
   config.vm.box = "velocity42/xenial64"
   config.vm.synced_folder ".", "/vagrant", type: "nfs"
 
   if config.vm.provider :vmware_workstation
-    # If we're running Workstation (i.e. Linux)
+    # If we're running VMware Workstation (i.e. Linux)
     if Vagrant.has_plugin?("vagrant-triggers")
       config.trigger.before :up do
         puts "[+] INFO: Ensuring /dev/vmnet* are correct to allow promiscuous mode."
@@ -105,33 +97,42 @@ Vagrant.configure("2") do |config|
       	box.vm.network :private_network, ip: "192.168.100.#{ip_start+i}", :netmask => "255.255.255.0"
       	box.vm.network :private_network, ip: "172.29.240.#{ip_start+i}", :netmask => "255.255.255.0"
 
-	# Create ssh-keypair for Ansible to function
-	if hostname == "compute-01"
-	  box.vm.provision :shell, :path => "masterkey.sh"
-	else
-	  box.vm.provision :shell, :path => "clientkey.sh"
-	end
+	      box.vm.provision :shell, :path => "hosts.sh"
 
-	box.vm.provision :shell, :path => "hosts.sh"
+        # Order is important - this is the last "prefix" (vm) to load up, so execute last
+        if hostname == "openstack-client"
 
-	# Order is important - this is the last "prefix" (vm) to load up, so execute last
-        if hostname == "controller-01"
-          box.vm.provision :ansible do |ansible|
+        	box.vm.provision :shell, :path => "hosts.sh"
+
+          box.vm.provision :shell, :path => "scripts/install-ansible.sh"
+
+          box.vm.provision :ansible_local do |ansible|
+            ansible.install = false
+            ansible.provisioning_path = "/vagrant"
+            # Disable default limit to connect to all the machines
+            ansible.limit = "all"
+            ansible.playbook = "playbooks/deploy-ssh-keys.yml"
+            ansible.inventory_path = "playbooks/hosts.ini"
+            ansible.extra_vars = { ansible_user: "vagrant", ansible_ssh_pass: "vagrant" }
+            ansible.become = false
+          end
+
+          box.vm.provision :ansible_local do |ansible|
+            ansible.install = false
             # Disable default limit to connect to all the machines
             ansible.compatibility_mode = "2.0"
             ansible.limit = "all"
             ansible.playbook = "install-openstack.yml"
             ansible.extra_vars = { ansible_ssh_user: 'vagrant' }
+            ansible.inventory_path = "playbooks/hosts.ini"
             ansible.become = true
           end
 
           box.vm.provision :shell, :path => "fetch-openrc-from-utility.sh"
-        end 
 
-	if hostname == "openstack-client"
-	  box.vm.provision :shell, :path => "openstack-client.sh"
-	end
+          box.vm.provision :shell, :path => "openstack-client.sh"
 
+        end
 
         # If using VMware Fusion
         box.vm.provider "vmware_fusion" do |v|
