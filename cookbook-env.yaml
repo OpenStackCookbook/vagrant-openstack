@@ -2,6 +2,6 @@ parameters:
   key_name: demokey
   image: xenial-image
   flavor: m1.tiny
-  public_net_id: feddef9b-b23a-46cf-915b-d0669ecee8ab
-  private_net_id: 794f6b96-34e2-403d-99dd-67c62a9a8062
-  private_subnet_id: a594ecc3-cd63-401d-9604-e956aca60197
+  public_net_id: 2ae1cd94-db49-4eaa-ae96-30f31212d6a2
+  private_net_id: c0db9303-339d-4bb6-a741-fd4b58fb4c28
+  private_subnet_id: 71159a51-aaf0-4de6-8f47-b40586638191

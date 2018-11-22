@@ -65,7 +65,8 @@ ssl_cipher_suite: "ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AE
 #repo_service_home_folder: /var/www
 #repo_server_port: 80
 #repo_pip_default_index: "http://{{ openstack_upstream_domain }}/mirror/pools"
-pip_install_options: "--trusted-host 172.29.236.10"
+#pip_install_options: "--trusted-host 172.29.236.10"
+pip_validate_certs: "no"
 
 
 ## OpenStack source options

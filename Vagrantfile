@@ -118,10 +118,11 @@ Vagrant.configure("2") do |config|
         if hostname == "controller-01"
           box.vm.provision :ansible do |ansible|
             # Disable default limit to connect to all the machines
+            ansible.compatibility_mode = "2.0"
             ansible.limit = "all"
             ansible.playbook = "install-openstack.yml"
             ansible.extra_vars = { ansible_ssh_user: 'vagrant' }
-            ansible.sudo = true
+            ansible.become = true
           end
 
           box.vm.provision :shell, :path => "fetch-openrc-from-utility.sh"
@@ -177,6 +178,7 @@ Vagrant.configure("2") do |config|
             vbox.customize ["modifyvm", :id, "--memory", 4096]
             vbox.customize ["modifyvm", :id, "--cpus", 1]
           end
+          vbox.customize ["modifyvm", :id, "--nicpromisc1", "allow-all"]
           vbox.customize ["modifyvm", :id, "--nicpromisc2", "allow-all"]
           vbox.customize ["modifyvm", :id, "--nicpromisc3", "allow-all"]
           vbox.customize ["modifyvm", :id, "--nicpromisc4", "allow-all"]
