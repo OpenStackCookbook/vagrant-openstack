@@ -1,4 +1,4 @@
-# vagrant-openstack
+# vagrant-openstack Rocky
 Vagrant environment that uses [OpenStack Ansible](https://github.com/openstack/openstack-ansible) for deploying OpenStack.<br>
 Contributors:
 - Kevin Jackson (@itarchitectkev)
