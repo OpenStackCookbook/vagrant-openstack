@@ -30,7 +30,8 @@ Vagrant.configure("2") do |config|
   end
 
   # Defaults (VirtualBox)
-  config.vm.box = "velocity42/xenial64"
+  #config.vm.box = "velocity42/xenial64"
+  config.vm.box = "bento/ubuntu-18.04"
   config.vm.synced_folder ".", "/vagrant", type: "nfs"
 
   if config.vm.provider :vmware_workstation
