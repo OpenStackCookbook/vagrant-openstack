@@ -9,8 +9,10 @@ Additional Contributors:
 - Wojciech Sciesinski (@ITpraktyk)
 - Geoff Higginbottom (@the_cloudguru)
 
+<!---
 # View the demo!
 [![Vagrant Up Demo](https://asciinema.org/a/sPAcxfGUSAYsDJy9LTXGZoLR1.png)](https://asciinema.org/a/sPAcxfGUSAYsDJy9LTXGZoLR1)
+-->
 
 # Requirements
 - Vagrant (recommended 1.8+)
