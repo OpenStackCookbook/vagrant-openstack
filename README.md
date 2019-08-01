@@ -1,4 +1,4 @@
-# vagrant-openstack Rocky
+# vagrant-openstack (Latest Master: Stein)
 Vagrant environment that uses [OpenStack Ansible](https://github.com/openstack/openstack-ansible) for deploying OpenStack.<br>
 Contributors:
 - Kevin Jackson (@itarchitectkev)
@@ -15,11 +15,11 @@ Additional Contributors:
 -->
 
 # Requirements
-- Vagrant (recommended 1.8+)
+- Vagrant (recommended 2.2+)
 - Vagrant plugins - [Installation instructions](https://www.vagrantup.com/docs/plugins/usage.html)
   - [vagrant-hostmanager](https://github.com/devopsgroup-io/vagrant-hostmanager)  
   - [vagrant-triggers](https://github.com/emyl/vagrant-triggers)
-- VirtualBox 4.3+ (Tested on VirtualBox 5.1)
+- VirtualBox 5.1 or 6.0
 - Git (to check out this environment)
 - NFSD enabled on Mac and Linux environments to allow guest /vagrant access
 
@@ -29,6 +29,10 @@ git clone https://github.com/OpenStackCookbook/vagrant-openstack.git
 cd vagrant-openstack
 vagrant up
 ```
+
+# Versions
+- Rocky: git clone --branch rocky https://github.com/OpenStackCookbook/vagrant-openstack.git
+- Stein: git clone --branch stein https://github.com/OpenStackCookbook/vagrant-openstack.git
 
 Time to deploy: 1 - 2 hours.
 
