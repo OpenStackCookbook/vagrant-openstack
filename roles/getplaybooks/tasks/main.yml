@@ -3,4 +3,4 @@
   git:
     repo=https://github.com/openstack/openstack-ansible.git
     dest=/opt/openstack-ansible
-    version="{{rpc_version}}"
+    version="{{osa_version}}"
