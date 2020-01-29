@@ -6,4 +6,5 @@
   template: src=openstack.j2 dest=/etc/network/interfaces.d/openstack.cfg owner=root group=root mode=0644
 
 - name: Edit Networking
-  shell: /vagrant/networking.sh
+  shell: 
+    cmd: bash /vagrant/networking.sh
